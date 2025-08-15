@@ -1,5 +1,6 @@
 package com.staj.biletbul.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -9,6 +10,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 public class User implements Serializable {
+
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,6 +23,7 @@ public class User implements Serializable {
 
     private String password;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<Event> events = new ArrayList<>();
 

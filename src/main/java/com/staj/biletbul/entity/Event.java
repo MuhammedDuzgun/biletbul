@@ -2,12 +2,13 @@ package com.staj.biletbul.entity;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "events")
-public class Event {
+public class Event implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +16,9 @@ public class Event {
 
     private String description;
 
-    private final Integer seatSize = 60;
+    private Integer standardSeats;
+
+    private Integer vipSeats;
 
     @ManyToMany
     @JoinTable(
@@ -25,16 +28,23 @@ public class Event {
     )
     private List<User> users = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "organizer_id", nullable = false)
     private Organizer organizer;
 
     public Event() {
     }
 
-    public Event(Long id, String description, List<User> users, Organizer organizer) {
+    public Event(Long id,
+                 String description,
+                 Integer standartSeats,
+                 Integer vipSeats,
+                 List<User> users,
+                 Organizer organizer) {
         this.id = id;
         this.description = description;
+        this.vipSeats = vipSeats;
+        this.standardSeats = standartSeats;
         this.users = users;
         this.organizer = organizer;
     }
@@ -55,8 +65,20 @@ public class Event {
         this.description = description;
     }
 
-    public Integer getSeatSize() {
-        return seatSize;
+    public Integer getStandardSeats() {
+        return standardSeats;
+    }
+
+    public void setStandardSeats(Integer standartSeats) {
+        this.standardSeats = standartSeats;
+    }
+
+    public Integer getVipSeats() {
+        return vipSeats;
+    }
+
+    public void setVipSeats(Integer vipSeats) {
+        this.vipSeats = vipSeats;
     }
 
     public List<User> getUsers() {
