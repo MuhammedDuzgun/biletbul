@@ -21,7 +21,7 @@ public class OrganizerService {
     }
 
     public Organizer getOrganizerById(Long id) {
-        return organizerRepository.getReferenceById(id);
+        return organizerRepository.findById(id).get();
     }
 
     @Transactional
