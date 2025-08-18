@@ -20,6 +20,10 @@ public class Event implements Serializable {
 
     private Integer vipSeats;
 
+    private boolean isAllStandardSeatsReserved = false;
+
+    private boolean isAllVipSeatsReserved = false;
+
     @ManyToMany
     @JoinTable(
             name = "event_users",
@@ -95,5 +99,21 @@ public class Event implements Serializable {
 
     public void setOrganizer(Organizer organizer) {
         this.organizer = organizer;
+    }
+
+    public boolean isAllStandardSeatsReserved() {
+        return isAllStandardSeatsReserved;
+    }
+
+    public void setAllStandardSeatsReserved(boolean allStandardSeatsReserved) {
+        isAllStandardSeatsReserved = allStandardSeatsReserved;
+    }
+
+    public boolean isAllVipSeatsReserved() {
+        return isAllVipSeatsReserved;
+    }
+
+    public void setAllVipSeatsReserved(boolean allVipSeatsReserved) {
+        isAllVipSeatsReserved = allVipSeatsReserved;
     }
 }
