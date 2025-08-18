@@ -15,7 +15,8 @@ public class Organizer implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String fullName;
+    @Column(nullable = false, unique = true)
+    private String organizerName;
 
      @Column(unique = true, nullable = false)
     private String email;
@@ -31,7 +32,7 @@ public class Organizer implements Serializable {
 
     public Organizer(Long id, String fullName, String email, String password, List<Event> eventList) {
         this.id = id;
-        this.fullName = fullName;
+        this.organizerName = fullName;
         this.email = email;
         this.password = password;
         this.eventList = eventList;
@@ -45,12 +46,12 @@ public class Organizer implements Serializable {
         this.id = id;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getOrganizerName() {
+        return organizerName;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setOrganizerName(String fullName) {
+        this.organizerName = fullName;
     }
 
     public String getEmail() {
