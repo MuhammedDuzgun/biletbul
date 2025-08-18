@@ -1,8 +1,11 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.Organizer;
+import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
 import com.staj.biletbul.exception.OrganizerNotFoundException;
+import com.staj.biletbul.mapper.OrganizerMapper;
 import com.staj.biletbul.repository.OrganizerRepository;
+import com.staj.biletbul.response.OrganizerResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -12,28 +15,46 @@ import java.util.List;
 public class OrganizerService {
 
     private final OrganizerRepository organizerRepository;
+    private final OrganizerMapper organizerMapper;
 
-    public OrganizerService(OrganizerRepository organizerRepository) {
+    public OrganizerService(OrganizerRepository organizerRepository,
+                            OrganizerMapper organizerMapper) {
         this.organizerRepository = organizerRepository;
+        this.organizerMapper = organizerMapper;
     }
 
-    public List<Organizer> getAllOrganizers() {
-        return organizerRepository.findAll();
+    public List<OrganizerResponse> getAllOrganizers() {
+        List<Organizer> organizers = organizerRepository.findAll();
+        List<OrganizerResponse> organizerResponses = organizers.stream().map(
+                organizerMapper::mapToOrganizerResponse
+        ).toList();
+        return organizerResponses;
     }
 
-    public Organizer getOrganizerById(Long id) {
-        return organizerRepository.findById(id)
+    public OrganizerResponse getOrganizerById(Long id) {
+        Organizer organizer = organizerRepository.findById(id)
                 .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
+        return organizerMapper.mapToOrganizerResponse(organizer);
     }
 
     @Transactional
-    public Organizer createOrganizer(Organizer organizer) {
-        return organizerRepository.save(organizer);
+    public OrganizerResponse createOrganizer(Organizer organizer) {
+        if (organizerRepository.findByEmail(organizer.getEmail()).isPresent()) {
+            throw new OrganizerAlreadyExistsException
+                    ("Organizer with email: " + organizer.getEmail() + " already exists");
+        }
+        if(organizerRepository.findByOrganizerName(organizer.getOrganizerName()).isPresent()) {
+            throw new OrganizerAlreadyExistsException
+                    ("Organizer with name: " + organizer.getOrganizerName() + " already exists");
+        }
+        Organizer createdOrganizer = organizerRepository.save(organizer);
+        return organizerMapper.mapToOrganizerResponse(createdOrganizer);
     }
 
     @Transactional
     public void deleteOrganizer(Long id) {
-        Organizer organizerToDelete = getOrganizerById(id);
+        Organizer organizerToDelete = organizerRepository.findById(id)
+                        .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
         organizerRepository.delete(organizerToDelete);
     }
 

@@ -1,14 +1,19 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.Event;
+import com.staj.biletbul.entity.EventCategory;
 import com.staj.biletbul.entity.Organizer;
 import com.staj.biletbul.entity.User;
 import com.staj.biletbul.enums.SeatType;
 import com.staj.biletbul.exception.*;
+import com.staj.biletbul.mapper.EventMapper;
+import com.staj.biletbul.repository.EventCategoryRepository;
 import com.staj.biletbul.repository.EventRepository;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.AddUserToEventRequest;
+import com.staj.biletbul.request.CreateEventRequest;
+import com.staj.biletbul.response.EventResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,42 +25,71 @@ public class EventService {
     private final EventRepository eventRepository;
     private final OrganizerRepository organizerRepository;
     private final UserRepository userRepository;
+    private final EventCategoryRepository eventCategoryRepository;
+    private final EventMapper eventMapper;
 
     public EventService(EventRepository eventRepository,
-                        OrganizerRepository organizerRepository, UserRepository userRepository) {
+                        OrganizerRepository organizerRepository,
+                        UserRepository userRepository,
+                        EventCategoryRepository eventCategoryRepository,
+                        EventMapper eventMapper) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
+        this.eventCategoryRepository = eventCategoryRepository;
+        this.eventMapper = eventMapper;
+
     }
 
-    public List<Event> getAllEvents() {
-        return eventRepository.findAll();
+    public List<EventResponse> getAllEvents() {
+        List<Event> events = eventRepository.findAll();
+        List<EventResponse> eventResponses = events.stream().map(
+                eventMapper::mapToResponse
+        ).toList();
+        return eventResponses;
     }
 
-    public Event getEventById(Long id) {
-        return eventRepository.findById(id)
+    public EventResponse getEventById(Long id) {
+        Event event = eventRepository.findById(id)
                 .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
+        return eventMapper.mapToResponse(event);
     }
 
     @Transactional
-    public Event createEvent(Event event) {
-        Long organizerId = event.getOrganizer().getId();
-        Organizer organizer = organizerRepository.findById(organizerId)
+    public EventResponse createEvent(CreateEventRequest request) {
+
+        Organizer organizer = organizerRepository.findByEmail(request.organizerMail())
                         .orElseThrow(()-> new OrganizerNotFoundException
-                                ("No organizer found with id: " + organizerId));
+                                ("No organizer found with email: " + request.organizerMail()));
+
+        EventCategory eventCategory = eventCategoryRepository.findByCategoryName
+                (request.eventCategoryName())
+                        .orElseThrow(()-> new EventCategoryNotFoundException
+                                        ("Event category not found with name: " +
+                                                request.eventCategoryName()));
+
+        Event event = eventMapper.mapToEntity(request);
+
         event.setOrganizer(organizer);
-        return eventRepository.save(event);
+        event.setEventCategory(eventCategory);
+
+        Event savedEvent = eventRepository.save(event);
+
+        return eventMapper.mapToResponse(savedEvent);
     }
 
     @Transactional
     public void deleteEvent(Long id) {
-        Event eventToDelete = getEventById(id);
+        Event eventToDelete = eventRepository.findById(id)
+                        .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
         eventRepository.delete(eventToDelete);
     }
 
     @Transactional
-    public Event addUserToEvent(Long eventId, AddUserToEventRequest request) {
-        Event event = getEventById(eventId);
+    public EventResponse addUserToEvent(Long eventId, AddUserToEventRequest request) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(()-> new EventNotFoundException("No event found with id: " + eventId));
+
         User user = userRepository.findByEmail(request.email())
                         .orElseThrow(() -> new UserNotFoundException
                                 ("User not found with email " + request.email()));
@@ -92,7 +126,9 @@ public class EventService {
             }
         }
 
-        return eventRepository.save(event);
+        eventRepository.save(event);
+
+        return eventMapper.mapToResponse(event);
     }
 
 }

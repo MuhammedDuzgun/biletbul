@@ -1,7 +1,9 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.entity.Organizer;
+import com.staj.biletbul.response.OrganizerResponse;
 import com.staj.biletbul.service.OrganizerService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,23 +19,24 @@ public class OrganizerController {
     }
 
     @GetMapping
-    public List<Organizer> getAllOrganizers() {
-        return organizerService.getAllOrganizers();
+    public ResponseEntity<List<OrganizerResponse>> getAllOrganizers() {
+        return ResponseEntity.ok(organizerService.getAllOrganizers());
     }
 
     @GetMapping("/{id}")
-    public Organizer getOrganizerById(@PathVariable("id") Long id) {
-        return organizerService.getOrganizerById(id);
+    public ResponseEntity<OrganizerResponse> getOrganizerById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(organizerService.getOrganizerById(id));
     }
 
     @PostMapping
-    public Organizer createOrganizer(@RequestBody Organizer organizer) {
-        return organizerService.createOrganizer(organizer);
+    public ResponseEntity<OrganizerResponse> createOrganizer(@RequestBody Organizer organizer) {
+        return ResponseEntity.ok(organizerService.createOrganizer(organizer));
     }
 
     @DeleteMapping("/{id}")
-    public void deleteOrganizer(@PathVariable("id") Long id){
+    public ResponseEntity<?> deleteOrganizer(@PathVariable("id") Long id) {
         organizerService.deleteOrganizer(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

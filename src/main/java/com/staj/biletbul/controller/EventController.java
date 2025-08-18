@@ -1,8 +1,10 @@
 package com.staj.biletbul.controller;
 
-import com.staj.biletbul.entity.Event;
 import com.staj.biletbul.request.AddUserToEventRequest;
+import com.staj.biletbul.request.CreateEventRequest;
+import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.service.EventService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,18 +20,18 @@ public class EventController {
     }
 
     @GetMapping
-    public List<Event> getAllEvents() {
-        return eventService.getAllEvents();
+    public ResponseEntity<List<EventResponse>> getAllEvents() {
+        return ResponseEntity.ok(eventService.getAllEvents());
     }
 
     @GetMapping("/{id}")
-    public Event getEventById(@PathVariable("id") Long id) {
-        return eventService.getEventById(id);
+    public ResponseEntity<EventResponse> getEventById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventService.getEventById(id));
     }
 
     @PostMapping
-    public Event createEvent(@RequestBody Event event) {
-        return eventService.createEvent(event);
+    public ResponseEntity<EventResponse> createEvent(@RequestBody CreateEventRequest request) {
+        return ResponseEntity.ok(eventService.createEvent(request));
     }
 
     @DeleteMapping("/{id}")
@@ -38,9 +40,9 @@ public class EventController {
     }
 
     @PostMapping("/{id}")
-    public Event addUserToEvent(@PathVariable("id") Long eventId,
-                                @RequestBody AddUserToEventRequest request) {
-        return eventService.addUserToEvent(eventId, request);
+    public ResponseEntity<EventResponse> addUserToEvent(@PathVariable("id") Long eventId,
+                                                        @RequestBody AddUserToEventRequest request) {
+        return ResponseEntity.ok(eventService.addUserToEvent(eventId, request));
     }
 
 }
