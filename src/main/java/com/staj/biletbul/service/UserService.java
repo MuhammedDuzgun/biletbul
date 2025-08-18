@@ -1,6 +1,7 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.User;
+import com.staj.biletbul.exception.UserNotFoundException;
 import com.staj.biletbul.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,8 @@ public class UserService {
     }
 
     public User getUserById(Long id) {
-        return userRepository.findById(id).get();
+        return userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User not found with id: " + id));
     }
 
     @Transactional

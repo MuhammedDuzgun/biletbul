@@ -1,6 +1,7 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.Organizer;
+import com.staj.biletbul.exception.OrganizerNotFoundException;
 import com.staj.biletbul.repository.OrganizerRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,8 @@ public class OrganizerService {
     }
 
     public Organizer getOrganizerById(Long id) {
-        return organizerRepository.findById(id).get();
+        return organizerRepository.findById(id)
+                .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
     }
 
     @Transactional

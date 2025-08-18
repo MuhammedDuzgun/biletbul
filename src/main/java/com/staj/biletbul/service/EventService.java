@@ -4,6 +4,7 @@ import com.staj.biletbul.entity.Event;
 import com.staj.biletbul.entity.Organizer;
 import com.staj.biletbul.entity.User;
 import com.staj.biletbul.enums.SeatType;
+import com.staj.biletbul.exception.*;
 import com.staj.biletbul.repository.EventRepository;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.repository.UserRepository;
@@ -32,13 +33,16 @@ public class EventService {
     }
 
     public Event getEventById(Long id) {
-        return eventRepository.findById(id).get();
+        return eventRepository.findById(id)
+                .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
     }
 
     @Transactional
     public Event createEvent(Event event) {
         Long organizerId = event.getOrganizer().getId();
-        Organizer organizer = organizerRepository.findById(organizerId).get();
+        Organizer organizer = organizerRepository.findById(organizerId)
+                        .orElseThrow(()-> new OrganizerNotFoundException
+                                ("No organizer found with id: " + organizerId));
         event.setOrganizer(organizer);
         return eventRepository.save(event);
     }
@@ -53,21 +57,22 @@ public class EventService {
     public Event addUserToEvent(Long eventId, AddUserToEventRequest request) {
         Event event = getEventById(eventId);
         User user = userRepository.findByEmail(request.email())
-                        .orElseThrow(() -> new RuntimeException("User not found with email " + request.email()));
+                        .orElseThrow(() -> new UserNotFoundException
+                                ("User not found with email " + request.email()));
 
         //kullanıcı daha once event'e kaydolmus mu
         if(event.getUsers().contains(user)) {
-            throw new RuntimeException("Bu etkinliğe daha önce kaydolmuşsunuz");
+            throw new AlreadyRegisteredEventException("Bu etkinliğe daha önce kaydolmuşsunuz");
         }
 
         //musait koltuk var mı
         if (request.seatType().equals(SeatType.STANDARD)) {
             if(!(event.getStandardSeats() > 0)) {
-                throw new RuntimeException("Standard koltuklar tükendi");
+                throw new AllStandardSeatsReservedException("Standard koltuklar tükendi");
             }
         } else if (request.seatType().equals(SeatType.VIP)) {
             if(!(event.getVipSeats() > 0)) {
-                throw new RuntimeException("Vip koltuklar tükendi");
+                throw new AllVipSeatsReservedException("Vip koltuklar tükendi");
             }
         }
 
@@ -77,8 +82,14 @@ public class EventService {
         //koltuk azaltma
         if (request.seatType() == SeatType.STANDARD) {
             event.setStandardSeats(event.getStandardSeats() - 1);
+            if(event.getStandardSeats() == 0) {
+                event.setAllStandardSeatsReserved(true);
+            }
         } else if (request.seatType() == SeatType.VIP) {
             event.setVipSeats(event.getVipSeats() - 1);
+            if(event.getVipSeats() == 0) {
+                event.setAllVipSeatsReserved(true);
+            }
         }
 
         return eventRepository.save(event);
