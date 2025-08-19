@@ -3,6 +3,7 @@ package com.staj.biletbul.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,10 @@ public class Event implements Serializable {
     private boolean isAllStandardSeatsReserved = false;
 
     private boolean isAllVipSeatsReserved = false;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
 
     @ManyToMany
     @JoinTable(
@@ -45,15 +50,19 @@ public class Event implements Serializable {
 
     public Event(Long id,
                  String description,
-                 Integer standartSeats,
+                 Integer standardSeats,
                  Integer vipSeats,
+                 LocalDateTime startTime,
+                 LocalDateTime endTime,
                  List<User> users,
                  Organizer organizer,
                  EventCategory eventCategory) {
         this.id = id;
         this.description = description;
         this.vipSeats = vipSeats;
-        this.standardSeats = standartSeats;
+        this.standardSeats = standardSeats;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.users = users;
         this.organizer = organizer;
         this.eventCategory = eventCategory;
@@ -129,5 +138,21 @@ public class Event implements Serializable {
 
     public void setEventCategory(EventCategory eventCategory) {
         this.eventCategory = eventCategory;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
     }
 }
