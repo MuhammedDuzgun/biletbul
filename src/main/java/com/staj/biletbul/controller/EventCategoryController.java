@@ -2,7 +2,9 @@ package com.staj.biletbul.controller;
 
 import com.staj.biletbul.entity.EventCategory;
 import com.staj.biletbul.response.EventCategoryResponse;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.EventCategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +36,8 @@ public class EventCategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteCategoryEventById(@PathVariable("id") Long id) {
-        eventCategoryService.deleteEventCategoryById(id);
+    public ResponseEntity<ResourceDeletedResponse> deleteCategoryEventById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(eventCategoryService.deleteEventCategoryById(id), HttpStatus.ACCEPTED);
     }
 
 }

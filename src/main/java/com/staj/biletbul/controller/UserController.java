@@ -1,8 +1,10 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.entity.User;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.response.UserResponse;
 import com.staj.biletbul.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +36,8 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteUserById(@PathVariable("id") Long id) {
-        userService.deleteUserById(id);
+    public ResponseEntity<ResourceDeletedResponse> deleteUserById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.deleteUserById(id), HttpStatus.ACCEPTED);
     }
 
 }

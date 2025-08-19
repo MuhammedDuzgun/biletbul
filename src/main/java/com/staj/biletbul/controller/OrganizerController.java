@@ -2,7 +2,9 @@ package com.staj.biletbul.controller;
 
 import com.staj.biletbul.entity.Organizer;
 import com.staj.biletbul.response.OrganizerResponse;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.OrganizerService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,9 +36,8 @@ public class OrganizerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteOrganizer(@PathVariable("id") Long id) {
-        organizerService.deleteOrganizer(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ResourceDeletedResponse> deleteOrganizer(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(organizerService.deleteOrganizer(id), HttpStatus.ACCEPTED);
     }
 
 }

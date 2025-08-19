@@ -3,7 +3,9 @@ package com.staj.biletbul.controller;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.response.EventResponse;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.EventService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,8 +37,8 @@ public class EventController {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteEventById(@PathVariable("id") Long id) {
-        eventService.deleteEvent(id);
+    public ResponseEntity<ResourceDeletedResponse> deleteEventById(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.ACCEPTED);
     }
 
     @PostMapping("/{id}")
