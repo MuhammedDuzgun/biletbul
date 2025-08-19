@@ -5,6 +5,7 @@ import com.staj.biletbul.exception.EventCategoryAlreadyExistsException;
 import com.staj.biletbul.exception.EventCategoryNotFoundException;
 import com.staj.biletbul.mapper.EventCategoryMapper;
 import com.staj.biletbul.repository.EventCategoryRepository;
+import com.staj.biletbul.request.CreateEventCategoryRequest;
 import com.staj.biletbul.response.EventCategoryResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import org.springframework.stereotype.Service;
@@ -40,11 +41,12 @@ public class EventCategoryService {
     }
 
     @Transactional
-    public EventCategoryResponse createEventCategory(EventCategory eventCategory) {
-        if (eventCategoryRepository.findByCategoryName(eventCategory.getCategoryName()).isPresent()) {
+    public EventCategoryResponse createEventCategory(CreateEventCategoryRequest request) {
+        if (eventCategoryRepository.findByCategoryName(request.categoryName()).isPresent()) {
             throw new EventCategoryAlreadyExistsException("Event category already exists");
         }
-        return eventCategoryMapper.mapToResponse(eventCategoryRepository.save(eventCategory));
+        return eventCategoryMapper.mapToResponse(eventCategoryRepository.save
+                (eventCategoryMapper.mapToEntity(request)));
     }
 
     @Transactional
