@@ -1,7 +1,7 @@
 package com.staj.biletbul.controller;
 
-import com.staj.biletbul.entity.EventCategory;
 import com.staj.biletbul.request.CreateEventCategoryRequest;
+import com.staj.biletbul.response.AllEventsOfEventCategoryResponse;
 import com.staj.biletbul.response.EventCategoryResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.EventCategoryService;
@@ -29,6 +29,12 @@ public class EventCategoryController {
     @GetMapping("/{id}")
     public ResponseEntity<EventCategoryResponse> getEventCategoryById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(eventCategoryService.findById(id));
+    }
+
+    @GetMapping("/{id}/events")
+    public ResponseEntity<AllEventsOfEventCategoryResponse> getAllEventsOfEventCategory
+            (@PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventCategoryService.findAllEventsOfCategory(id));
     }
 
     @PostMapping
