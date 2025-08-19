@@ -1,6 +1,7 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.entity.User;
+import com.staj.biletbul.request.CreateUserRequest;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.response.UserResponse;
 import com.staj.biletbul.service.UserService;
@@ -31,8 +32,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody User user) {
-        return ResponseEntity.ok(userService.createUser(user));
+    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
+        return ResponseEntity.ok(userService.createUser(request));
     }
 
     @DeleteMapping("/{id}")

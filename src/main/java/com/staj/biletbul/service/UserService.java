@@ -4,6 +4,7 @@ import com.staj.biletbul.entity.User;
 import com.staj.biletbul.exception.UserNotFoundException;
 import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.UserRepository;
+import com.staj.biletbul.request.CreateUserRequest;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.response.UserResponse;
 import org.springframework.stereotype.Service;
@@ -38,8 +39,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserResponse createUser(User user) {
-        User createdUser = userRepository.save(user);
+    public UserResponse createUser(CreateUserRequest request) {
+        User createdUser = userRepository.save(userMapper.mapToEntity(request));
         return userMapper.mapToUserResponse(createdUser);
     }
 
