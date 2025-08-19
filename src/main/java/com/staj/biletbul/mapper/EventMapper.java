@@ -8,12 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class EventMapper {
 
-    private final UserMapper userMapper;
-
-    public EventMapper(UserMapper userMapper) {
-        this.userMapper = userMapper;
-    }
-
     public EventResponse mapToResponse(Event event) {
         EventResponse response = new EventResponse(
                 event.getId(),
@@ -26,7 +20,6 @@ public class EventMapper {
                 event.getVipSeatPrice(),
                 event.getStartTime(),
                 event.getEndTime(),
-                event.getUsers().stream().map(userMapper::mapToUserResponse).toList(),
                 event.getOrganizer().getOrganizerName(),
                 event.getEventCategory().getCategoryName()
         );
@@ -46,5 +39,4 @@ public class EventMapper {
         event.setEndTime(request.endTime());
         return event;
     }
-
 }

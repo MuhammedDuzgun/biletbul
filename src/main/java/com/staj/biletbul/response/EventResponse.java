@@ -14,7 +14,6 @@ public record EventResponse(Long id,
                             BigDecimal vipSeatPrice,
                             LocalDateTime startTime,
                             LocalDateTime endTime,
-                            List<UserResponse> users,
                             String organizerName,
                             String  eventCategoryName) {
 }
