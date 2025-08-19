@@ -1,10 +1,13 @@
 package com.staj.biletbul.request;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record CreateEventRequest(String description,
                                  Integer standardSeats,
                                  Integer vipSeats,
+                                 BigDecimal standardSeatPrice,
+                                 BigDecimal vipSeatPrice,
                                  LocalDateTime startTime,
                                  LocalDateTime endTime,
                                  String organizerMail,

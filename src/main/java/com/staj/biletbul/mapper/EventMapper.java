@@ -22,6 +22,8 @@ public class EventMapper {
                 event.getVipSeats(),
                 event.isAllStandardSeatsReserved(),
                 event.isAllVipSeatsReserved(),
+                event.getStandardSeatPrice(),
+                event.getVipSeatPrice(),
                 event.getStartTime(),
                 event.getEndTime(),
                 event.getUsers().stream().map(userMapper::mapToUserResponse).toList(),
@@ -36,6 +38,10 @@ public class EventMapper {
         event.setDescription(request.description());
         event.setStandardSeats(request.standardSeats());
         event.setVipSeats(request.vipSeats());
+        event.setStandardSeatPrice(request.standardSeatPrice());
+        event.setVipSeatPrice(request.vipSeatPrice());
+        event.setStartTime(request.startTime());
+        event.setEndTime(request.endTime());
         event.setStartTime(request.startTime());
         event.setEndTime(request.endTime());
         return event;
