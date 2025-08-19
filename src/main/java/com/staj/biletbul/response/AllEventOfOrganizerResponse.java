@@ -5,5 +5,5 @@ import java.util.List;
 public record AllEventOfOrganizerResponse(Long id,
                                           String organizerName,
                                           String email,
-                                          List<EventResponse> eventResponses) {
+                                          List<EventResponse> events) {
 }

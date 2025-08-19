@@ -2,7 +2,6 @@ package com.staj.biletbul.response;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record EventResponse(Long id,
                             String description,
