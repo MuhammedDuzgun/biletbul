@@ -7,14 +7,17 @@ import com.staj.biletbul.entity.User;
 import com.staj.biletbul.enums.SeatType;
 import com.staj.biletbul.exception.*;
 import com.staj.biletbul.mapper.EventMapper;
+import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.EventCategoryRepository;
 import com.staj.biletbul.repository.EventRepository;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
+import com.staj.biletbul.response.AllUsersOfEventResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
+import com.staj.biletbul.response.UserResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,18 +31,19 @@ public class EventService {
     private final UserRepository userRepository;
     private final EventCategoryRepository eventCategoryRepository;
     private final EventMapper eventMapper;
+    private final UserMapper userMapper;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
                         UserRepository userRepository,
                         EventCategoryRepository eventCategoryRepository,
-                        EventMapper eventMapper) {
+                        EventMapper eventMapper, UserMapper userMapper) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
         this.eventCategoryRepository = eventCategoryRepository;
         this.eventMapper = eventMapper;
-
+        this.userMapper = userMapper;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -54,6 +58,33 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
         return eventMapper.mapToResponse(event);
+    }
+
+    public AllUsersOfEventResponse getAllUserOfEvent(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
+
+        List<UserResponse> userResponses = event.getUsers()
+                .stream()
+                .map(userMapper::mapToUserResponse)
+                .toList();
+
+        AllUsersOfEventResponse response = new AllUsersOfEventResponse(
+                event.getId(),
+                event.getDescription(),
+                event.getStandardSeats(),
+                event.getVipSeats(),
+                event.isAllStandardSeatsReserved(),
+                event.isAllVipSeatsReserved(),
+                event.getStandardSeatPrice(),
+                event.getVipSeatPrice(),
+                event.getStartTime(),
+                event.getEndTime(),
+                event.getOrganizer().getOrganizerName(),
+                event.getEventCategory().getCategoryName(),
+                userResponses
+        );
+        return response;
     }
 
     @Transactional

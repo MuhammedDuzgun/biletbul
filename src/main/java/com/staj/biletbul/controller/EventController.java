@@ -2,6 +2,7 @@ package com.staj.biletbul.controller;
 
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
+import com.staj.biletbul.response.AllUsersOfEventResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.EventService;
@@ -29,6 +30,11 @@ public class EventController {
     @GetMapping("/{id}")
     public ResponseEntity<EventResponse> getEventById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(eventService.getEventById(id));
+    }
+
+    @GetMapping("/{id}/users")
+    public ResponseEntity<AllUsersOfEventResponse> getAllUsersOfEvent(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventService.getAllUserOfEvent(id));
     }
 
     @PostMapping
