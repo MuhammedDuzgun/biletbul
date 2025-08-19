@@ -1,5 +1,6 @@
 package com.staj.biletbul.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record EventResponse(Long id,
@@ -8,6 +9,8 @@ public record EventResponse(Long id,
                             Integer vipSeats,
                             boolean isAllStandardSeatsReserved,
                             boolean isAllVipSeatsReserved,
+                            LocalDateTime startTime,
+                            LocalDateTime endTime,
                             List<UserResponse> users,
                             String organizerName,
                             String  eventCategoryName) {
