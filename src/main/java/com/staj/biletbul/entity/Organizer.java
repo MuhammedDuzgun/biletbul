@@ -30,7 +30,11 @@ public class Organizer implements Serializable {
     public Organizer() {
     }
 
-    public Organizer(Long id, String fullName, String email, String password, List<Event> eventList) {
+    public Organizer(Long id,
+                     String fullName,
+                     String email,
+                     String password,
+                     List<Event> eventList) {
         this.id = id;
         this.organizerName = fullName;
         this.email = email;

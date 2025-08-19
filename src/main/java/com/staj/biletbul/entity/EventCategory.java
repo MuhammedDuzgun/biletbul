@@ -26,7 +26,10 @@ public class EventCategory {
     public EventCategory() {
     }
 
-    public EventCategory(Long id, String categoryName, String description, List<Event> events) {
+    public EventCategory(Long id,
+                         String categoryName,
+                         String description,
+                         List<Event> events) {
         this.id = id;
         this.categoryName = categoryName;
         this.description = description;

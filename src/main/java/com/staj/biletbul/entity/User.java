@@ -29,7 +29,11 @@ public class User implements Serializable {
     public User() {
     }
 
-    public User(Long id, String fullName, String email, String password, List<Event> events) {
+    public User(Long id,
+                String fullName,
+                String email,
+                String password,
+                List<Event> events) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
