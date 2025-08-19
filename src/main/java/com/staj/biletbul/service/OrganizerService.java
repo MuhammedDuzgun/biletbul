@@ -5,6 +5,7 @@ import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
 import com.staj.biletbul.exception.OrganizerNotFoundException;
 import com.staj.biletbul.mapper.OrganizerMapper;
 import com.staj.biletbul.repository.OrganizerRepository;
+import com.staj.biletbul.request.CreateOrganizerRequest;
 import com.staj.biletbul.response.OrganizerResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import org.springframework.stereotype.Service;
@@ -39,16 +40,17 @@ public class OrganizerService {
     }
 
     @Transactional
-    public OrganizerResponse createOrganizer(Organizer organizer) {
-        if (organizerRepository.findByEmail(organizer.getEmail()).isPresent()) {
+    public OrganizerResponse createOrganizer(CreateOrganizerRequest request) {
+        if (organizerRepository.findByEmail(request.email()).isPresent()) {
             throw new OrganizerAlreadyExistsException
-                    ("Organizer with email: " + organizer.getEmail() + " already exists");
+                    ("Organizer with email: " + request.email() + " already exists");
         }
-        if(organizerRepository.findByOrganizerName(organizer.getOrganizerName()).isPresent()) {
+        if(organizerRepository.findByOrganizerName(request.organizerName()).isPresent()) {
             throw new OrganizerAlreadyExistsException
-                    ("Organizer with name: " + organizer.getOrganizerName() + " already exists");
+                    ("Organizer with name: " + request.organizerName() + " already exists");
         }
-        Organizer createdOrganizer = organizerRepository.save(organizer);
+        Organizer createdOrganizer = organizerRepository.save
+                (organizerMapper.mapToEntity(request));
         return organizerMapper.mapToOrganizerResponse(createdOrganizer);
     }
 

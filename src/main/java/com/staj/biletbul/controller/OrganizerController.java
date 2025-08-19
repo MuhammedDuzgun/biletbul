@@ -1,6 +1,7 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.entity.Organizer;
+import com.staj.biletbul.request.CreateOrganizerRequest;
 import com.staj.biletbul.response.OrganizerResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.OrganizerService;
@@ -31,8 +32,8 @@ public class OrganizerController {
     }
 
     @PostMapping
-    public ResponseEntity<OrganizerResponse> createOrganizer(@RequestBody Organizer organizer) {
-        return ResponseEntity.ok(organizerService.createOrganizer(organizer));
+    public ResponseEntity<OrganizerResponse> createOrganizer(@RequestBody CreateOrganizerRequest request) {
+        return ResponseEntity.ok(organizerService.createOrganizer(request));
     }
 
     @DeleteMapping("/{id}")
