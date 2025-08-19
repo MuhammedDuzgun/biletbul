@@ -3,6 +3,7 @@ package com.staj.biletbul.entity;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,10 @@ public class Event implements Serializable {
     private boolean isAllStandardSeatsReserved = false;
 
     private boolean isAllVipSeatsReserved = false;
+
+    private BigDecimal standardSeatPrice;
+
+    private BigDecimal vipSeatPrice;
 
     private LocalDateTime startTime;
 
@@ -52,6 +57,8 @@ public class Event implements Serializable {
                  String description,
                  Integer standardSeats,
                  Integer vipSeats,
+                 BigDecimal standardSeatPrice,
+                 BigDecimal vipSeatPrice,
                  LocalDateTime startTime,
                  LocalDateTime endTime,
                  List<User> users,
@@ -61,6 +68,8 @@ public class Event implements Serializable {
         this.description = description;
         this.vipSeats = vipSeats;
         this.standardSeats = standardSeats;
+        this.standardSeatPrice = standardSeatPrice;
+        this.vipSeatPrice = vipSeatPrice;
         this.startTime = startTime;
         this.endTime = endTime;
         this.users = users;
@@ -154,5 +163,21 @@ public class Event implements Serializable {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public BigDecimal getStandardSeatPrice() {
+        return standardSeatPrice;
+    }
+
+    public void setStandardSeatPrice(BigDecimal standardSeatPrice) {
+        this.standardSeatPrice = standardSeatPrice;
+    }
+
+    public BigDecimal getVipSeatPrice() {
+        return vipSeatPrice;
+    }
+
+    public void setVipSeatPrice(BigDecimal vipSeatPrice) {
+        this.vipSeatPrice = vipSeatPrice;
     }
 }
