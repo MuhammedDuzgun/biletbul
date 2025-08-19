@@ -3,9 +3,12 @@ package com.staj.biletbul.service;
 import com.staj.biletbul.entity.Organizer;
 import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
 import com.staj.biletbul.exception.OrganizerNotFoundException;
+import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.OrganizerMapper;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.request.CreateOrganizerRequest;
+import com.staj.biletbul.response.AllEventOfOrganizerResponse;
+import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.OrganizerResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import org.springframework.stereotype.Service;
@@ -18,11 +21,14 @@ public class OrganizerService {
 
     private final OrganizerRepository organizerRepository;
     private final OrganizerMapper organizerMapper;
+    private final EventMapper eventMapper;
 
     public OrganizerService(OrganizerRepository organizerRepository,
-                            OrganizerMapper organizerMapper) {
+                            OrganizerMapper organizerMapper,
+                            EventMapper eventMapper) {
         this.organizerRepository = organizerRepository;
         this.organizerMapper = organizerMapper;
+        this.eventMapper = eventMapper;
     }
 
     public List<OrganizerResponse> getAllOrganizers() {
@@ -37,6 +43,22 @@ public class OrganizerService {
         Organizer organizer = organizerRepository.findById(id)
                 .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
         return organizerMapper.mapToOrganizerResponse(organizer);
+    }
+
+    public AllEventOfOrganizerResponse getAllEventOfOrganizerById(Long id) {
+        Organizer organizer = organizerRepository.findById(id)
+                .orElseThrow(() -> new OrganizerNotFoundException("Organizer not found with id: " + id));
+        List<EventResponse> eventResponses = organizer.getEventList()
+                .stream()
+                .map(eventMapper::mapToResponse)
+                .toList();
+        AllEventOfOrganizerResponse response = new AllEventOfOrganizerResponse(
+                organizer.getId(),
+                organizer.getOrganizerName(),
+                organizer.getEmail(),
+                eventResponses
+        );
+        return response;
     }
 
     @Transactional
