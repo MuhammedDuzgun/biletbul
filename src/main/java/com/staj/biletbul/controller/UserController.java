@@ -1,7 +1,7 @@
 package com.staj.biletbul.controller;
 
-import com.staj.biletbul.entity.User;
 import com.staj.biletbul.request.CreateUserRequest;
+import com.staj.biletbul.response.AllEventsOfUserResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.response.UserResponse;
 import com.staj.biletbul.service.UserService;
@@ -29,6 +29,11 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @GetMapping("/{id}/events")
+    public ResponseEntity<AllEventsOfUserResponse> getAllEventsOfUser(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(userService.getAllEventsOfUser(id));
     }
 
     @PostMapping

@@ -2,9 +2,12 @@ package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.User;
 import com.staj.biletbul.exception.UserNotFoundException;
+import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.CreateUserRequest;
+import com.staj.biletbul.response.AllEventsOfUserResponse;
+import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.response.UserResponse;
 import org.springframework.stereotype.Service;
@@ -17,11 +20,15 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final EventMapper eventMapper;
 
 
-    public UserService(UserRepository userRepository, UserMapper userMapper) {
+    public UserService(UserRepository userRepository,
+                       UserMapper userMapper,
+                       EventMapper eventMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
+        this.eventMapper = eventMapper;
     }
 
     public List<UserResponse> getAllUsers() {
@@ -36,6 +43,24 @@ public class UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(()-> new UserNotFoundException("User not found with id: " + id));
         return userMapper.mapToUserResponse(user);
+    }
+
+    public AllEventsOfUserResponse getAllEventsOfUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User not found with id: " + id));
+
+        List<EventResponse> events = user.getEvents()
+                .stream()
+                .map(eventMapper::mapToResponse)
+                .toList();
+
+        AllEventsOfUserResponse response = new AllEventsOfUserResponse(
+                user.getId(),
+                user.getFullName(),
+                user.getEmail(),
+                events
+        );
+        return response;
     }
 
     @Transactional
