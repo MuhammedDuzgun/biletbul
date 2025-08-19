@@ -1,7 +1,9 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.entity.EventCategory;
+import com.staj.biletbul.response.EventCategoryResponse;
 import com.staj.biletbul.service.EventCategoryService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,18 +19,18 @@ public class EventCategoryController {
     }
 
     @GetMapping
-    public List<EventCategory> getAllEventCategories() {
-        return eventCategoryService.findAll();
+    public ResponseEntity<List<EventCategoryResponse>> getAllEventCategories() {
+        return ResponseEntity.ok(eventCategoryService.findAll());
     }
 
     @GetMapping("/{id}")
-    public EventCategory getEventCategoryById(@PathVariable("id") Long id) {
-        return eventCategoryService.findById(id);
+    public ResponseEntity<EventCategoryResponse> getEventCategoryById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventCategoryService.findById(id));
     }
 
     @PostMapping
-    public EventCategory createEventCategory(@RequestBody EventCategory eventCategory) {
-        return eventCategoryService.createEventCategory(eventCategory);
+    public ResponseEntity<EventCategoryResponse> createEventCategory(@RequestBody EventCategory eventCategory) {
+        return ResponseEntity.ok(eventCategoryService.createEventCategory(eventCategory));
     }
 
     @DeleteMapping("/{id}")
