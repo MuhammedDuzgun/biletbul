@@ -6,6 +6,7 @@ import com.staj.biletbul.exception.OrganizerNotFoundException;
 import com.staj.biletbul.mapper.OrganizerMapper;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.response.OrganizerResponse;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -52,10 +53,11 @@ public class OrganizerService {
     }
 
     @Transactional
-    public void deleteOrganizer(Long id) {
+    public ResourceDeletedResponse deleteOrganizer(Long id) {
         Organizer organizerToDelete = organizerRepository.findById(id)
                         .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
         organizerRepository.delete(organizerToDelete);
+        return new ResourceDeletedResponse("Organizer with id: " + id + " deleted successfully");
     }
 
 }

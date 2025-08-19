@@ -4,6 +4,7 @@ import com.staj.biletbul.entity.User;
 import com.staj.biletbul.exception.UserNotFoundException;
 import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.UserRepository;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.response.UserResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,8 +44,9 @@ public class UserService {
     }
 
     @Transactional
-    public void deleteUserById(Long id) {
+    public ResourceDeletedResponse deleteUserById(Long id) {
         userRepository.deleteById(id);
+        return new ResourceDeletedResponse("Deleted user with id: " + id);
     }
 
 }

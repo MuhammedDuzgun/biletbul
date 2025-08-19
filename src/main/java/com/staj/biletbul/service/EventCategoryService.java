@@ -6,6 +6,7 @@ import com.staj.biletbul.exception.EventCategoryNotFoundException;
 import com.staj.biletbul.mapper.EventCategoryMapper;
 import com.staj.biletbul.repository.EventCategoryRepository;
 import com.staj.biletbul.response.EventCategoryResponse;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,10 +48,11 @@ public class EventCategoryService {
     }
 
     @Transactional
-    public void deleteEventCategoryById(Long id) {
+    public ResourceDeletedResponse deleteEventCategoryById(Long id) {
         EventCategory eventCategoryToDelete = eventCategoryRepository.findById(id)
                 .orElseThrow(()-> new EventCategoryNotFoundException("Event category not found with id: " + id));
         eventCategoryRepository.delete(eventCategoryToDelete);
+        return new ResourceDeletedResponse("Event Category with id: " + id + " deleted successfully");
     }
 
 }

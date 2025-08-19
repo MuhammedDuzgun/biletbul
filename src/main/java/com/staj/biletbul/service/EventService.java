@@ -14,6 +14,7 @@ import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.response.EventResponse;
+import com.staj.biletbul.response.ResourceDeletedResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,10 +80,11 @@ public class EventService {
     }
 
     @Transactional
-    public void deleteEvent(Long id) {
+    public ResourceDeletedResponse deleteEvent(Long id) {
         Event eventToDelete = eventRepository.findById(id)
                         .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
         eventRepository.delete(eventToDelete);
+        return new ResourceDeletedResponse("Event with id: " + id + " deleted successfully.");
     }
 
     @Transactional
