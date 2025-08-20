@@ -1,6 +1,7 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.User;
+import com.staj.biletbul.exception.UserAlreadyExistsException;
 import com.staj.biletbul.exception.UserNotFoundException;
 import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.UserMapper;
@@ -32,10 +33,10 @@ public class UserService {
     }
 
     public List<UserResponse> getAllUsers() {
-        List<User> users = userRepository.findAll();
-        List<UserResponse> userResponses = users.stream().map(
-                userMapper::mapToUserResponse
-        ).toList();
+        List<UserResponse> userResponses = userRepository.findAll()
+                .stream()
+                .map(userMapper::mapToUserResponse)
+                .toList();
         return userResponses;
     }
 
@@ -65,13 +66,17 @@ public class UserService {
 
     @Transactional
     public UserResponse createUser(CreateUserRequest request) {
-        User createdUser = userRepository.save(userMapper.mapToEntity(request));
-        return userMapper.mapToUserResponse(createdUser);
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            throw new UserAlreadyExistsException("user already exists with email: " + request.email());
+        }
+        return userMapper.mapToUserResponse(userRepository.save(userMapper.mapToEntity(request)));
     }
 
     @Transactional
     public ResourceDeletedResponse deleteUserById(Long id) {
-        userRepository.deleteById(id);
+        User userToDelete = userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User not found with id: " + id));
+        userRepository.delete(userToDelete);
         return new ResourceDeletedResponse("Deleted user with id: " + id);
     }
 
