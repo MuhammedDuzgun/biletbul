@@ -7,7 +7,7 @@ import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.OrganizerMapper;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.request.CreateOrganizerRequest;
-import com.staj.biletbul.response.AllEventOfOrganizerResponse;
+import com.staj.biletbul.response.AllEventsOfOrganizerResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.OrganizerResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
@@ -45,14 +45,14 @@ public class OrganizerService {
         return organizerMapper.mapToOrganizerResponse(organizer);
     }
 
-    public AllEventOfOrganizerResponse getAllEventOfOrganizerById(Long id) {
+    public AllEventsOfOrganizerResponse getAllEventOfOrganizerById(Long id) {
         Organizer organizer = organizerRepository.findById(id)
                 .orElseThrow(() -> new OrganizerNotFoundException("Organizer not found with id: " + id));
         List<EventResponse> eventResponses = organizer.getEventList()
                 .stream()
                 .map(eventMapper::mapToResponse)
                 .toList();
-        AllEventOfOrganizerResponse response = new AllEventOfOrganizerResponse(
+        AllEventsOfOrganizerResponse response = new AllEventsOfOrganizerResponse(
                 organizer.getId(),
                 organizer.getOrganizerName(),
                 organizer.getEmail(),

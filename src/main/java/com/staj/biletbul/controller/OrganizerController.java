@@ -1,7 +1,7 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.request.CreateOrganizerRequest;
-import com.staj.biletbul.response.AllEventOfOrganizerResponse;
+import com.staj.biletbul.response.AllEventsOfOrganizerResponse;
 import com.staj.biletbul.response.OrganizerResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.OrganizerService;
@@ -32,7 +32,7 @@ public class OrganizerController {
     }
 
     @GetMapping("/{id}/events")
-    public ResponseEntity<AllEventOfOrganizerResponse> getAllEventsOfOrganizer(@PathVariable("id") Long id) {
+    public ResponseEntity<AllEventsOfOrganizerResponse> getAllEventsOfOrganizer(@PathVariable("id") Long id) {
         return ResponseEntity.ok(organizerService.getAllEventOfOrganizerById(id));
     }
 
