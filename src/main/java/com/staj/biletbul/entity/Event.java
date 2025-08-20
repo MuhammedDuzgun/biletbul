@@ -54,6 +54,10 @@ public class Event implements Serializable {
     @JoinColumn(name = "artist_id", nullable = false)
     private Artist artist;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "city_id", nullable = false)
+    private City city;
+
     public Event() {
     }
 
@@ -68,7 +72,8 @@ public class Event implements Serializable {
                  List<User> users,
                  Organizer organizer,
                  EventCategory eventCategory,
-                 Artist artist) {
+                 Artist artist,
+                 City city) {
         this.id = id;
         this.description = description;
         this.vipSeats = vipSeats;
@@ -81,6 +86,7 @@ public class Event implements Serializable {
         this.organizer = organizer;
         this.eventCategory = eventCategory;
         this.artist = artist;
+        this.city = city;
     }
 
     public Long getId() {
@@ -193,5 +199,13 @@ public class Event implements Serializable {
 
     public void setArtist(Artist artist) {
         this.artist = artist;
+    }
+
+    public City getCity() {
+        return city;
+    }
+
+    public void setCity(City city) {
+        this.city = city;
     }
 }
