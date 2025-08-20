@@ -11,6 +11,7 @@ public class EventMapper {
     public EventResponse mapToResponse(Event event) {
         EventResponse response = new EventResponse(
                 event.getId(),
+                event.getTitle(),
                 event.getDescription(),
                 event.getStandardSeats(),
                 event.getVipSeats(),
@@ -22,13 +23,15 @@ public class EventMapper {
                 event.getEndTime(),
                 event.getOrganizer().getOrganizerName(),
                 event.getEventCategory().getCategoryName(),
-                event.getArtist().getName()
+                event.getArtist().getName(),
+                event.getCity().getName()
         );
         return response;
     }
 
     public Event mapToEntity(CreateEventRequest request) {
         Event event = new Event();
+        event.setTitle(request.title());
         event.setDescription(request.description());
         event.setStandardSeats(request.standardSeats());
         event.setVipSeats(request.vipSeats());

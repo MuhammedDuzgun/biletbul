@@ -27,13 +27,15 @@ public class EventService {
     private final ArtistRepository artistRepository;
     private final EventMapper eventMapper;
     private final UserMapper userMapper;
+    private final CityRepository cityRepository;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
                         UserRepository userRepository,
                         EventCategoryRepository eventCategoryRepository,
                         ArtistRepository artistRepository,
-                        EventMapper eventMapper, UserMapper userMapper) {
+                        EventMapper eventMapper, UserMapper userMapper,
+                        CityRepository cityRepository) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
@@ -41,6 +43,7 @@ public class EventService {
         this.artistRepository = artistRepository;
         this.eventMapper = eventMapper;
         this.userMapper = userMapper;
+        this.cityRepository = cityRepository;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -68,6 +71,7 @@ public class EventService {
 
         AllUsersOfEventResponse response = new AllUsersOfEventResponse(
                 event.getId(),
+                event.getTitle(),
                 event.getDescription(),
                 event.getStandardSeats(),
                 event.getVipSeats(),
@@ -101,11 +105,19 @@ public class EventService {
                 .orElseThrow(()-> new ArtistNotFoundException
                         ("Artist not found with name : " + request.artistName()));
 
+        City city = cityRepository.findByName(request.cityName())
+                .orElseThrow(()-> new CityNotFoundException("city with name : " + request.cityName() + "not found"));
+
+        if (eventRepository.findByTitle(request.title()).isPresent()) {
+            throw new EventAlreadyExistsException("Event already exists with title: " + request.title());
+        }
+
         Event event = eventMapper.mapToEntity(request);
 
         event.setOrganizer(organizer);
         event.setEventCategory(eventCategory);
         event.setArtist(artist);
+        event.setCity(city);
 
         Event savedEvent = eventRepository.save(event);
 

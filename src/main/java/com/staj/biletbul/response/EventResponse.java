@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record EventResponse(Long id,
+                            String title,
                             String description,
                             Integer standardSeats,
                             Integer vipSeats,
@@ -15,5 +16,6 @@ public record EventResponse(Long id,
                             LocalDateTime endTime,
                             String organizerName,
                             String eventCategoryName,
-                            String artistName) {
+                            String artistName,
+                            String cityName) {
 }

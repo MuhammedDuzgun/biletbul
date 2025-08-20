@@ -3,7 +3,8 @@ package com.staj.biletbul.request;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-public record CreateEventRequest(String description,
+public record CreateEventRequest(String title,
+                                 String description,
                                  Integer standardSeats,
                                  Integer vipSeats,
                                  BigDecimal standardSeatPrice,
@@ -12,5 +13,6 @@ public record CreateEventRequest(String description,
                                  LocalDateTime endTime,
                                  String organizerMail,
                                  String eventCategoryName,
-                                 String artistName) {
+                                 String artistName,
+                                 String cityName) {
 }

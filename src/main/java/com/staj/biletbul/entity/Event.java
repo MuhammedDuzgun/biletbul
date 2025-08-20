@@ -16,6 +16,8 @@ public class Event implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String title;
+
     private String description;
 
     private Integer standardSeats;
@@ -62,6 +64,7 @@ public class Event implements Serializable {
     }
 
     public Event(Long id,
+                 String title,
                  String description,
                  Integer standardSeats,
                  Integer vipSeats,
@@ -75,6 +78,7 @@ public class Event implements Serializable {
                  Artist artist,
                  City city) {
         this.id = id;
+        this.title = title;
         this.description = description;
         this.vipSeats = vipSeats;
         this.standardSeats = standardSeats;
@@ -207,5 +211,13 @@ public class Event implements Serializable {
 
     public void setCity(City city) {
         this.city = city;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }
