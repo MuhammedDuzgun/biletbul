@@ -1,6 +1,5 @@
 package com.staj.biletbul.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -22,7 +21,6 @@ public class User implements Serializable {
 
     private String password;
 
-    @JsonIgnore
     @ManyToMany(mappedBy = "users")
     private List<Event> events = new ArrayList<>();
 

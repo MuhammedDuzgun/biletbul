@@ -107,7 +107,7 @@ public class EventService {
                         ("Artist not found with name : " + request.artistName()));
 
         City city = cityRepository.findByName(request.cityName())
-                .orElseThrow(()-> new CityNotFoundException("city with name : " + request.cityName() + "not found"));
+                .orElseThrow(()-> new CityNotFoundException("city with name : " + request.cityName() + " not found"));
 
         if (eventRepository.findByTitle(request.title()).isPresent()) {
             throw new EventAlreadyExistsException("Event already exists with title: " + request.title());
