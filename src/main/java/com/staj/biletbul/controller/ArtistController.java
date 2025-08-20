@@ -1,6 +1,7 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.request.CreateArtistRequest;
+import com.staj.biletbul.response.AllEventsOfArtistResponse;
 import com.staj.biletbul.response.ArtistResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.ArtistService;
@@ -28,6 +29,11 @@ public class ArtistController {
     @GetMapping("/{id}")
     public ResponseEntity<ArtistResponse> getArtistById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(artistService.getArtistById(id));
+    }
+
+    @GetMapping("/{id}/events")
+    public ResponseEntity<AllEventsOfArtistResponse> getAllEventsOfArtistById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(artistService.getAllEventsOfArtistById(id));
     }
 
     @PostMapping
