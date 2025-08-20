@@ -14,5 +14,6 @@ public record EventResponse(Long id,
                             LocalDateTime startTime,
                             LocalDateTime endTime,
                             String organizerName,
-                            String  eventCategoryName) {
+                            String eventCategoryName,
+                            String artistName) {
 }

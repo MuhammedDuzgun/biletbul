@@ -1,17 +1,11 @@
 package com.staj.biletbul.service;
 
-import com.staj.biletbul.entity.Event;
-import com.staj.biletbul.entity.EventCategory;
-import com.staj.biletbul.entity.Organizer;
-import com.staj.biletbul.entity.User;
+import com.staj.biletbul.entity.*;
 import com.staj.biletbul.enums.SeatType;
 import com.staj.biletbul.exception.*;
 import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.UserMapper;
-import com.staj.biletbul.repository.EventCategoryRepository;
-import com.staj.biletbul.repository.EventRepository;
-import com.staj.biletbul.repository.OrganizerRepository;
-import com.staj.biletbul.repository.UserRepository;
+import com.staj.biletbul.repository.*;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.response.AllUsersOfEventResponse;
@@ -30,6 +24,7 @@ public class EventService {
     private final OrganizerRepository organizerRepository;
     private final UserRepository userRepository;
     private final EventCategoryRepository eventCategoryRepository;
+    private final ArtistRepository artistRepository;
     private final EventMapper eventMapper;
     private final UserMapper userMapper;
 
@@ -37,11 +32,13 @@ public class EventService {
                         OrganizerRepository organizerRepository,
                         UserRepository userRepository,
                         EventCategoryRepository eventCategoryRepository,
+                        ArtistRepository artistRepository,
                         EventMapper eventMapper, UserMapper userMapper) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
         this.eventCategoryRepository = eventCategoryRepository;
+        this.artistRepository = artistRepository;
         this.eventMapper = eventMapper;
         this.userMapper = userMapper;
     }
@@ -100,10 +97,15 @@ public class EventService {
                                         ("Event category not found with name: " +
                                                 request.eventCategoryName()));
 
+        Artist artist = artistRepository.findByName(request.artistName())
+                .orElseThrow(()-> new ArtistNotFoundException
+                        ("Artist not found with name : " + request.artistName()));
+
         Event event = eventMapper.mapToEntity(request);
 
         event.setOrganizer(organizer);
         event.setEventCategory(eventCategory);
+        event.setArtist(artist);
 
         Event savedEvent = eventRepository.save(event);
 

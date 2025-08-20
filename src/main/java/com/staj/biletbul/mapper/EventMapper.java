@@ -21,7 +21,8 @@ public class EventMapper {
                 event.getStartTime(),
                 event.getEndTime(),
                 event.getOrganizer().getOrganizerName(),
-                event.getEventCategory().getCategoryName()
+                event.getEventCategory().getCategoryName(),
+                event.getArtist().getName()
         );
         return response;
     }

@@ -11,5 +11,6 @@ public record CreateEventRequest(String description,
                                  LocalDateTime startTime,
                                  LocalDateTime endTime,
                                  String organizerMail,
-                                 String eventCategoryName) {
+                                 String eventCategoryName,
+                                 String artistName) {
 }
