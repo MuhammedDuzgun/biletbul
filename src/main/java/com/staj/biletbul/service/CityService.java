@@ -4,10 +4,10 @@ import com.staj.biletbul.entity.City;
 import com.staj.biletbul.exception.CityAlreadyExistsException;
 import com.staj.biletbul.exception.CityNotFoundException;
 import com.staj.biletbul.mapper.CityMapper;
+import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.repository.CityRepository;
 import com.staj.biletbul.request.CreateCityRequest;
-import com.staj.biletbul.response.CityResponse;
-import com.staj.biletbul.response.ResourceDeletedResponse;
+import com.staj.biletbul.response.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +18,13 @@ public class CityService {
 
     private final CityRepository cityRepository;
     private final CityMapper cityMapper;
+    private final EventMapper eventMapper;
 
     public CityService(CityRepository cityRepository,
-                       CityMapper cityMapper) {
+                       CityMapper cityMapper, EventMapper eventMapper) {
         this.cityRepository = cityRepository;
         this.cityMapper = cityMapper;
+        this.eventMapper = eventMapper;
     }
 
     public List<CityResponse> getAllCities() {
@@ -35,6 +37,26 @@ public class CityService {
     public CityResponse getCityById(Long id) {
         return cityMapper.mapToCityResponse(cityRepository.findById(id)
                 .orElseThrow(()-> new CityNotFoundException("City not found with id " + id)));
+    }
+
+    public AllEventsOfCityResponse getAllEventsOfCity(Long id) {
+        City city = cityRepository.findById(id)
+                .orElseThrow(()-> new CityNotFoundException("City not found with id " + id));
+
+        List<EventResponse> events = city.getEventList()
+                .stream()
+                .map(eventMapper::mapToResponse)
+                .toList();
+
+        AllEventsOfCityResponse response = new AllEventsOfCityResponse(
+                city.getId(),
+                city.getName(),
+                city.getCountry(),
+                city.getPlateNumber(),
+                events
+        );
+
+        return response;
     }
 
     @Transactional
