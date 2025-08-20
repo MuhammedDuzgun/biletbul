@@ -38,7 +38,7 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
-        return ResponseEntity.ok(userService.createUser(request));
+        return new ResponseEntity<>(userService.createUser(request), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

@@ -39,7 +39,7 @@ public class EventController {
 
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(@RequestBody CreateEventRequest request) {
-        return ResponseEntity.ok(eventService.createEvent(request));
+        return new ResponseEntity<>(eventService.createEvent(request), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
@@ -50,7 +50,7 @@ public class EventController {
     @PostMapping("/{id}")
     public ResponseEntity<EventResponse> addUserToEvent(@PathVariable("id") Long eventId,
                                                         @RequestBody AddUserToEventRequest request) {
-        return ResponseEntity.ok(eventService.addUserToEvent(eventId, request));
+        return new ResponseEntity<>(eventService.addUserToEvent(eventId, request), HttpStatus.CREATED);
     }
 
 }

@@ -40,7 +40,7 @@ public class EventCategoryController {
     @PostMapping
     public ResponseEntity<EventCategoryResponse> createEventCategory
             (@RequestBody CreateEventCategoryRequest request) {
-        return ResponseEntity.ok(eventCategoryService.createEventCategory(request));
+        return new ResponseEntity<>(eventCategoryService.createEventCategory(request), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")

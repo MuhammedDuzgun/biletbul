@@ -38,7 +38,7 @@ public class OrganizerController {
 
     @PostMapping
     public ResponseEntity<OrganizerResponse> createOrganizer(@RequestBody CreateOrganizerRequest request) {
-        return ResponseEntity.ok(organizerService.createOrganizer(request));
+        return new ResponseEntity<>(organizerService.createOrganizer(request), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/{id}")
