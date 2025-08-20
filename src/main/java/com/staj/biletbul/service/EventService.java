@@ -34,7 +34,8 @@ public class EventService {
                         UserRepository userRepository,
                         EventCategoryRepository eventCategoryRepository,
                         ArtistRepository artistRepository,
-                        EventMapper eventMapper, UserMapper userMapper,
+                        EventMapper eventMapper,
+                        UserMapper userMapper,
                         CityRepository cityRepository) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
@@ -47,10 +48,10 @@ public class EventService {
     }
 
     public List<EventResponse> getAllEvents() {
-        List<Event> events = eventRepository.findAll();
-        List<EventResponse> eventResponses = events.stream().map(
-                eventMapper::mapToResponse
-        ).toList();
+        List<EventResponse> eventResponses = eventRepository.findAll()
+                .stream()
+                .map(eventMapper::mapToResponse)
+                .toList();
         return eventResponses;
     }
 

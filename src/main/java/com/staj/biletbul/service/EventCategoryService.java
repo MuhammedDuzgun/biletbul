@@ -1,6 +1,5 @@
 package com.staj.biletbul.service;
 
-import com.staj.biletbul.entity.Event;
 import com.staj.biletbul.entity.EventCategory;
 import com.staj.biletbul.exception.EventCategoryAlreadyExistsException;
 import com.staj.biletbul.exception.EventCategoryNotFoundException;
@@ -25,18 +24,18 @@ public class EventCategoryService {
     private final EventMapper eventMapper;
 
     public EventCategoryService(EventCategoryRepository eventCategoryRepository,
-                                EventCategoryMapper eventCategoryMapper, EventMapper eventMapper) {
+                                EventCategoryMapper eventCategoryMapper,
+                                EventMapper eventMapper) {
         this.eventCategoryRepository = eventCategoryRepository;
         this.eventCategoryMapper = eventCategoryMapper;
         this.eventMapper = eventMapper;
     }
 
     public List<EventCategoryResponse> findAll() {
-        List<EventCategory> eventCategories = eventCategoryRepository.findAll();
-        List<EventCategoryResponse> eventCategoryResponses =
-                eventCategories.stream().map(
-                        eventCategoryMapper::mapToResponse
-                ).toList();
+        List<EventCategoryResponse> eventCategoryResponses = eventCategoryRepository.findAll()
+                .stream()
+                .map(eventCategoryMapper::mapToResponse)
+                .toList();
         return eventCategoryResponses;
     }
 
@@ -49,10 +48,12 @@ public class EventCategoryService {
     public AllEventsOfEventCategoryResponse findAllEventsOfCategory(Long id) {
         EventCategory eventCategory = eventCategoryRepository.findById(id)
                 .orElseThrow(() -> new EventCategoryNotFoundException("Event category not found with id: " + id));
-        List<Event> events = eventCategory.getEvents();
-        List<EventResponse> eventResponses = events.stream().map(
-                eventMapper::mapToResponse
-        ).toList();
+
+        List<EventResponse> eventResponses = eventCategory.getEvents()
+                .stream()
+                .map(eventMapper::mapToResponse)
+                .toList();
+
         AllEventsOfEventCategoryResponse response = new AllEventsOfEventCategoryResponse(
                 eventCategory.getId(),
                 eventCategory.getCategoryName(),

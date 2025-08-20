@@ -24,7 +24,8 @@ public class ArtistService {
     private final EventMapper eventMapper;
 
     public ArtistService(ArtistRepository artistRepository,
-                         ArtistMapper artistMapper, EventMapper eventMapper) {
+                         ArtistMapper artistMapper,
+                         EventMapper eventMapper) {
         this.artistRepository = artistRepository;
         this.artistMapper = artistMapper;
         this.eventMapper = eventMapper;
@@ -70,9 +71,9 @@ public class ArtistService {
 
     @Transactional
     public ResourceDeletedResponse deleteArtistById(Long id) {
-        artistRepository.findById(id)
+        Artist artistToDelete = artistRepository.findById(id)
                 .orElseThrow(() -> new ArtistNotFoundException("Artist not found with id " + id));
-        artistRepository.deleteById(id);
+        artistRepository.delete(artistToDelete);
         return new ResourceDeletedResponse("Deleted artist with id " + id);
     }
 

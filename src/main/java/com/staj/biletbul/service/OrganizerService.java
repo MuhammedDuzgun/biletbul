@@ -32,10 +32,10 @@ public class OrganizerService {
     }
 
     public List<OrganizerResponse> getAllOrganizers() {
-        List<Organizer> organizers = organizerRepository.findAll();
-        List<OrganizerResponse> organizerResponses = organizers.stream().map(
-                organizerMapper::mapToOrganizerResponse
-        ).toList();
+        List<OrganizerResponse> organizerResponses = organizerRepository.findAll()
+                .stream()
+                .map(organizerMapper::mapToOrganizerResponse)
+                .toList();
         return organizerResponses;
     }
 

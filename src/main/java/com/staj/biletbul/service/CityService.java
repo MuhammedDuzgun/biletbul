@@ -21,7 +21,8 @@ public class CityService {
     private final EventMapper eventMapper;
 
     public CityService(CityRepository cityRepository,
-                       CityMapper cityMapper, EventMapper eventMapper) {
+                       CityMapper cityMapper,
+                       EventMapper eventMapper) {
         this.cityRepository = cityRepository;
         this.cityMapper = cityMapper;
         this.eventMapper = eventMapper;

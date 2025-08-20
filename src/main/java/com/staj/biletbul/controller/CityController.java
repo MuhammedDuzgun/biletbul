@@ -4,6 +4,7 @@ import com.staj.biletbul.request.CreateCityRequest;
 import com.staj.biletbul.response.AllEventsOfCityResponse;
 import com.staj.biletbul.response.CityResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
+import com.staj.biletbul.service.ArtistService;
 import com.staj.biletbul.service.CityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,8 +44,7 @@ public class CityController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<ResourceDeletedResponse> deleteCityById(@PathVariable("id") Long id) {
-        cityService.deleteCityById(id);
-        return ResponseEntity.accepted().body(new ResourceDeletedResponse("city deleted with id: " + id));
+        return new ResponseEntity<>(cityService.deleteCityById(id), HttpStatus.ACCEPTED);
     }
 
 }
