@@ -4,7 +4,6 @@ import com.staj.biletbul.request.CreateCityRequest;
 import com.staj.biletbul.response.AllEventsOfCityResponse;
 import com.staj.biletbul.response.CityResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
-import com.staj.biletbul.service.ArtistService;
 import com.staj.biletbul.service.CityService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
