@@ -23,7 +23,7 @@ public class City {
     @OneToMany(mappedBy = "city",
             cascade = CascadeType.ALL,
             orphanRemoval = true,
-            fetch = FetchType.EAGER)
+            fetch = FetchType.LAZY)
     private List<Event> eventList = new ArrayList<Event>();
 
     public City() {

@@ -1,6 +1,5 @@
 package com.staj.biletbul.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -19,8 +18,10 @@ public class EventCategory {
 
     private String description;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "eventCategory", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "eventCategory",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private List<Event> events = new ArrayList<Event>();
 
     public EventCategory() {

@@ -1,6 +1,5 @@
 package com.staj.biletbul.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -23,8 +22,10 @@ public class Organizer implements Serializable {
 
     private String password;
 
-    @OneToMany(mappedBy = "organizer", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+    @OneToMany(mappedBy = "organizer",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
     private List<Event> eventList = new ArrayList<Event>();
 
     public Organizer() {
