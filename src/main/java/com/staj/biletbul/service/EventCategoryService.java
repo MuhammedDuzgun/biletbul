@@ -76,6 +76,10 @@ public class EventCategoryService {
     public ResourceDeletedResponse deleteEventCategoryById(Long id) {
         EventCategory eventCategoryToDelete = eventCategoryRepository.findById(id)
                 .orElseThrow(()-> new EventCategoryNotFoundException("Event category not found with id: " + id));
+
+        //event category'de olan event'leri de sil
+        eventCategoryToDelete.getEvents().clear();
+
         eventCategoryRepository.delete(eventCategoryToDelete);
         return new ResourceDeletedResponse("Event Category with id: " + id + " deleted successfully");
     }

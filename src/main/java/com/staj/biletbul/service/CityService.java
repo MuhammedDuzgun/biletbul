@@ -72,6 +72,10 @@ public class CityService {
     public ResourceDeletedResponse deleteCityById(Long id) {
         City cityToDelete = cityRepository.findById(id)
                 .orElseThrow(() -> new CityNotFoundException("City not found with id " + id));
+
+        //city'de olan event'leri sil
+        cityToDelete.getEventList().clear();
+
         cityRepository.delete(cityToDelete);
         return new ResourceDeletedResponse("city with id " + id + " deleted successfully");
     }

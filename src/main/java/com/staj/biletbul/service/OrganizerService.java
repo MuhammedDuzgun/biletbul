@@ -80,6 +80,10 @@ public class OrganizerService {
     public ResourceDeletedResponse deleteOrganizer(Long id) {
         Organizer organizerToDelete = organizerRepository.findById(id)
                         .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
+
+        //organizer'ın event'lerini de sil
+        organizerToDelete.getEventList().clear();
+
         organizerRepository.delete(organizerToDelete);
         return new ResourceDeletedResponse("Organizer with id: " + id + " deleted successfully");
     }
