@@ -76,7 +76,13 @@ public class UserService {
     public ResourceDeletedResponse deleteUserById(Long id) {
         User userToDelete = userRepository.findById(id)
                 .orElseThrow(()-> new UserNotFoundException("User not found with id: " + id));
-        userRepository.delete(userToDelete);
+
+        //event_users tablosundan sil
+        userRepository.deleteUserEvents(id);
+
+        //user'ı sil
+        userRepository.deleteUserById(id);
+
         return new ResourceDeletedResponse("Deleted user with id: " + id);
     }
 

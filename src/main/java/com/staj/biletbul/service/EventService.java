@@ -129,7 +129,13 @@ public class EventService {
     public ResourceDeletedResponse deleteEvent(Long id) {
         Event eventToDelete = eventRepository.findById(id)
                         .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
-        eventRepository.delete(eventToDelete);
+
+        //event_users tablosundan sil
+        eventRepository.deleteEventUsers(id);
+
+        //event'i sil
+        eventRepository.deleteEventById(id);
+
         return new ResourceDeletedResponse("Event with id: " + id + " deleted successfully.");
     }
 
