@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 @Entity
@@ -28,6 +29,14 @@ public class Organizer implements Serializable {
             orphanRemoval = true)
     private List<Event> eventList = new ArrayList<Event>();
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "organizer_roles",
+            joinColumns = @JoinColumn(name = "organizer_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private HashSet<Role> roles = new HashSet<>();
+
     public Organizer() {
     }
 
@@ -35,12 +44,14 @@ public class Organizer implements Serializable {
                      String fullName,
                      String email,
                      String password,
-                     List<Event> eventList) {
+                     List<Event> eventList,
+                     HashSet<Role> roles) {
         this.id = id;
         this.organizerName = fullName;
         this.email = email;
         this.password = password;
         this.eventList = eventList;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -81,5 +92,13 @@ public class Organizer implements Serializable {
 
     public void setEventList(List<Event> eventList) {
         this.eventList = eventList;
+    }
+
+    public HashSet<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(HashSet<Role> roles) {
+        this.roles = roles;
     }
 }
