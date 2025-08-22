@@ -3,6 +3,8 @@ package com.staj.biletbul.entity;
 import com.staj.biletbul.enums.SeatType;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(
         name = "seats",
@@ -18,6 +20,8 @@ public class Seat {
 
     @Column(nullable = false)
     private String seatNumber;
+
+    private BigDecimal seatPrice;
 
     @Enumerated(EnumType.STRING)
     private SeatType seatType;
@@ -35,11 +39,13 @@ public class Seat {
 
     public Seat(Long id,
                 String seatNumber,
+                BigDecimal seatPrice,
                 SeatType seatType,
                 Event event,
                 User user) {
         this.id = id;
         this.seatNumber = seatNumber;
+        this.seatPrice = seatPrice;
         this.seatType = seatType;
         this.event = event;
         this.user = user;
@@ -83,5 +89,13 @@ public class Seat {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public BigDecimal getSeatPrice() {
+        return seatPrice;
+    }
+
+    public void setSeatPrice(BigDecimal seatPrice) {
+        this.seatPrice = seatPrice;
     }
 }
