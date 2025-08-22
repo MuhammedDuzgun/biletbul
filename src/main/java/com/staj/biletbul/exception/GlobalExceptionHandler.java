@@ -158,4 +158,24 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(SeatNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleSeatNotFoundException
+            (SeatNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(SeatAlreadyTakenException.class)
+    public ResponseEntity<ErrorResponse> handleSeatAlreadyExistsException
+            (SeatAlreadyTakenException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setStatus(HttpStatus.CONFLICT.value());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
+
 }
