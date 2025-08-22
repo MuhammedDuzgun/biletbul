@@ -93,6 +93,10 @@ public class EventService {
         return response;
     }
 
+    //all seats of event
+
+    //all available seats of event
+
     @Transactional
     public EventResponse createEvent(CreateEventRequest request) {
 
@@ -130,7 +134,7 @@ public class EventService {
         List<Seat> seats = new ArrayList<>();
 
         //standart koltuklar
-        for (int i=0; i<request.standardSeats(); i++) {
+        for (int i=1; i<request.standardSeats() + 1; i++) {
             Seat seat = new Seat();
             seat.setSeatNumber("S" + i);
             seat.setSeatType(SeatType.STANDARD);
@@ -139,7 +143,7 @@ public class EventService {
         }
 
         //vip koltuklar
-        for (int i=0; i<request.vipSeats(); i++) {
+        for (int i=1; i<request.vipSeats() + 1; i++) {
             Seat seat = new Seat();
             seat.setSeatNumber("V" + i);
             seat.setSeatType(SeatType.VIP);
@@ -161,6 +165,9 @@ public class EventService {
         //event_users tablosundan sil
         eventRepository.deleteEventUsers(id);
 
+        //koltukları sil
+        seatRepository.deleteSeatsByEventId(id);
+
         //event'i sil
         eventRepository.deleteEventById(id);
 
@@ -176,37 +183,19 @@ public class EventService {
                         .orElseThrow(() -> new UserNotFoundException
                                 ("User not found with email " + request.email()));
 
-        //kullanıcı daha once event'e kaydolmus mu
-        if(event.getUsers().contains(user)) {
-            throw new AlreadyRegisteredEventException("Bu etkinliğe daha önce kaydolmuşsunuz");
+        Seat seat = seatRepository.findByEventAndSeatNumber(event, request.seatNumber())
+                .orElseThrow(()-> new SeatNotFoundException("Seat not found with id : " + request.seatNumber()));
+
+        //secilen koltuk musait mi
+        if (seat.getUser() != null) {
+            throw new SeatAlreadyTakenException("Seat already taken with number : " + seat.getSeatNumber());
         }
 
-        //musait koltuk var mı
-        if (request.seatType().equals(SeatType.STANDARD)) {
-            if(!(event.getStandardSeats() > 0)) {
-                throw new AllStandardSeatsReservedException("Standard koltuklar tükendi");
-            }
-        } else if (request.seatType().equals(SeatType.VIP)) {
-            if(!(event.getVipSeats() > 0)) {
-                throw new AllVipSeatsReservedException("Vip koltuklar tükendi");
-            }
-        }
+        //kullanıcıyı koltuga ekleme
+        seat.setUser(user);
 
         //etkinlige kullaniciyi ekleme
         event.getUsers().add(user);
-
-        //koltuk azaltma
-        if (request.seatType() == SeatType.STANDARD) {
-            event.setStandardSeats(event.getStandardSeats() - 1);
-            if(event.getStandardSeats() == 0) {
-                event.setAllStandardSeatsReserved(true);
-            }
-        } else if (request.seatType() == SeatType.VIP) {
-            event.setVipSeats(event.getVipSeats() - 1);
-            if(event.getVipSeats() == 0) {
-                event.setAllVipSeatsReserved(true);
-            }
-        }
 
         eventRepository.save(event);
 

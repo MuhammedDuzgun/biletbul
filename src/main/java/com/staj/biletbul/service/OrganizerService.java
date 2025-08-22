@@ -99,6 +99,9 @@ public class OrganizerService {
         //organizer'ın event'lerini de sil
         organizerToDelete.getEventList().clear();
 
+        //organizer_roles temizle
+        organizerToDelete.getRoles().clear();
+
         organizerRepository.delete(organizerToDelete);
         return new ResourceDeletedResponse("Organizer with id: " + id + " deleted successfully");
     }
