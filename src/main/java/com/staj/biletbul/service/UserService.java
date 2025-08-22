@@ -1,10 +1,13 @@
 package com.staj.biletbul.service;
 
+import com.staj.biletbul.entity.Role;
 import com.staj.biletbul.entity.User;
+import com.staj.biletbul.enums.RoleName;
 import com.staj.biletbul.exception.UserAlreadyExistsException;
 import com.staj.biletbul.exception.UserNotFoundException;
 import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.UserMapper;
+import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.CreateUserRequest;
 import com.staj.biletbul.response.AllEventsOfUserResponse;
@@ -14,20 +17,24 @@ import com.staj.biletbul.response.UserResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final UserMapper userMapper;
     private final EventMapper eventMapper;
 
-
     public UserService(UserRepository userRepository,
+                       RoleRepository roleRepository,
                        UserMapper userMapper,
                        EventMapper eventMapper) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.eventMapper = eventMapper;
     }
@@ -69,7 +76,16 @@ public class UserService {
         if (userRepository.findByEmail(request.email()).isPresent()) {
             throw new UserAlreadyExistsException("user already exists with email: " + request.email());
         }
-        return userMapper.mapToUserResponse(userRepository.save(userMapper.mapToEntity(request)));
+
+        //rol
+        Set<Role> roles = new HashSet<>();
+        Role roleOrganizer = roleRepository.findByRoleName(RoleName.ROLE_USER);
+        roles.add(roleOrganizer);
+
+        User userToCreate = userMapper.mapToEntity(request);
+        userToCreate.setRoles(roles);
+
+        return userMapper.mapToUserResponse(userRepository.save(userToCreate));
     }
 
     @Transactional

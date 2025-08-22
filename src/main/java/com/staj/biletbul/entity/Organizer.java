@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "organizer")
@@ -35,7 +36,7 @@ public class Organizer implements Serializable {
             joinColumns = @JoinColumn(name = "organizer_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private HashSet<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     public Organizer() {
     }
@@ -45,7 +46,7 @@ public class Organizer implements Serializable {
                      String email,
                      String password,
                      List<Event> eventList,
-                     HashSet<Role> roles) {
+                     Set<Role> roles) {
         this.id = id;
         this.organizerName = fullName;
         this.email = email;
@@ -94,11 +95,11 @@ public class Organizer implements Serializable {
         this.eventList = eventList;
     }
 
-    public HashSet<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(HashSet<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 }

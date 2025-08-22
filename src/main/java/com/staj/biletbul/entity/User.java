@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -28,7 +29,7 @@ public class User implements Serializable {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private HashSet<Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     @ManyToMany(mappedBy = "users")
     private List<Event> events = new ArrayList<>();
@@ -41,7 +42,7 @@ public class User implements Serializable {
                 String email,
                 String password,
                 List<Event> events,
-                HashSet<Role> roles) {
+                Set<Role> roles) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -90,11 +91,11 @@ public class User implements Serializable {
         this.events = events;
     }
 
-    public HashSet<Role> getRoles() {
+    public Set<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(HashSet<Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
 }

@@ -1,11 +1,14 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.Organizer;
+import com.staj.biletbul.entity.Role;
+import com.staj.biletbul.enums.RoleName;
 import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
 import com.staj.biletbul.exception.OrganizerNotFoundException;
 import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.OrganizerMapper;
 import com.staj.biletbul.repository.OrganizerRepository;
+import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.request.CreateOrganizerRequest;
 import com.staj.biletbul.response.AllEventsOfOrganizerResponse;
 import com.staj.biletbul.response.EventResponse;
@@ -14,7 +17,9 @@ import com.staj.biletbul.response.ResourceDeletedResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class OrganizerService {
@@ -22,13 +27,16 @@ public class OrganizerService {
     private final OrganizerRepository organizerRepository;
     private final OrganizerMapper organizerMapper;
     private final EventMapper eventMapper;
+    private final RoleRepository roleRepository;
 
     public OrganizerService(OrganizerRepository organizerRepository,
                             OrganizerMapper organizerMapper,
-                            EventMapper eventMapper) {
+                            EventMapper eventMapper,
+                            RoleRepository roleRepository) {
         this.organizerRepository = organizerRepository;
         this.organizerMapper = organizerMapper;
         this.eventMapper = eventMapper;
+        this.roleRepository = roleRepository;
     }
 
     public List<OrganizerResponse> getAllOrganizers() {
@@ -71,9 +79,16 @@ public class OrganizerService {
             throw new OrganizerAlreadyExistsException
                     ("Organizer with name: " + request.organizerName() + " already exists");
         }
-        Organizer createdOrganizer = organizerRepository.save
-                (organizerMapper.mapToEntity(request));
-        return organizerMapper.mapToOrganizerResponse(createdOrganizer);
+
+        //rol
+        Set<Role> roles = new HashSet<>();
+        Role roleOrganizer = roleRepository.findByRoleName(RoleName.ROLE_ORGANIZER);
+        roles.add(roleOrganizer);
+
+        Organizer organizerToCreate = organizerMapper.mapToEntity(request);
+        organizerToCreate.setRoles(roles);
+
+        return organizerMapper.mapToOrganizerResponse(organizerRepository.save(organizerToCreate));
     }
 
     @Transactional
