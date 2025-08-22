@@ -15,6 +15,7 @@ import com.staj.biletbul.response.UserResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,6 +29,7 @@ public class EventService {
     private final EventMapper eventMapper;
     private final UserMapper userMapper;
     private final CityRepository cityRepository;
+    private final SeatRepository seatRepository;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
@@ -36,7 +38,8 @@ public class EventService {
                         ArtistRepository artistRepository,
                         EventMapper eventMapper,
                         UserMapper userMapper,
-                        CityRepository cityRepository) {
+                        CityRepository cityRepository,
+                        SeatRepository seatRepository) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
@@ -45,6 +48,7 @@ public class EventService {
         this.eventMapper = eventMapper;
         this.userMapper = userMapper;
         this.cityRepository = cityRepository;
+        this.seatRepository = seatRepository;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -121,6 +125,30 @@ public class EventService {
         event.setCity(city);
 
         Event savedEvent = eventRepository.save(event);
+
+        //koltuklar
+        List<Seat> seats = new ArrayList<>();
+
+        //standart koltuklar
+        for (int i=0; i<request.standardSeats(); i++) {
+            Seat seat = new Seat();
+            seat.setSeatNumber("S" + i);
+            seat.setSeatType(SeatType.STANDARD);
+            seat.setEvent(savedEvent);
+            seats.add(seat);
+        }
+
+        //vip koltuklar
+        for (int i=0; i<request.vipSeats(); i++) {
+            Seat seat = new Seat();
+            seat.setSeatNumber("V" + i);
+            seat.setSeatType(SeatType.VIP);
+            seat.setEvent(savedEvent);
+            seats.add(seat);
+        }
+
+        //koltukları ekle
+        seatRepository.saveAll(seats);
 
         return eventMapper.mapToResponse(savedEvent);
     }

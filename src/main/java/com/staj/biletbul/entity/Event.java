@@ -60,6 +60,11 @@ public class Event implements Serializable {
     @JoinColumn(name = "city_id", nullable = false)
     private City city;
 
+    @OneToMany(mappedBy = "event",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    private List<Seat> seats = new ArrayList<>();
+
     public Event() {
     }
 
@@ -76,7 +81,8 @@ public class Event implements Serializable {
                  Organizer organizer,
                  EventCategory eventCategory,
                  Artist artist,
-                 City city) {
+                 City city,
+                 List<Seat> seats) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -91,6 +97,7 @@ public class Event implements Serializable {
         this.eventCategory = eventCategory;
         this.artist = artist;
         this.city = city;
+        this.seats = seats;
     }
 
     public Long getId() {
@@ -219,5 +226,13 @@ public class Event implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public List<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
     }
 }
