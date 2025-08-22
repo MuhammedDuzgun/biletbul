@@ -1,7 +1,7 @@
 package com.staj.biletbul.enums;
 
 public enum RoleName {
-    USER,
-    ORGANIZER,
-    ADMIN
+    ROLE_USER,
+    ROLE_ORGANIZER,
+    ROLE_ADMIN
 }
