@@ -26,14 +26,23 @@ public class Seat {
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = true)
+    private User user;
+
     public Seat() {
     }
 
-    public Seat(Long id, String seatNumber, SeatType seatType, Event event) {
+    public Seat(Long id,
+                String seatNumber,
+                SeatType seatType,
+                Event event,
+                User user) {
         this.id = id;
         this.seatNumber = seatNumber;
         this.seatType = seatType;
         this.event = event;
+        this.user = user;
     }
 
     public Long getId() {
@@ -66,5 +75,13 @@ public class Seat {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
