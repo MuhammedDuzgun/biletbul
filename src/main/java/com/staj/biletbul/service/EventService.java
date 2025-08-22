@@ -4,14 +4,12 @@ import com.staj.biletbul.entity.*;
 import com.staj.biletbul.enums.SeatType;
 import com.staj.biletbul.exception.*;
 import com.staj.biletbul.mapper.EventMapper;
+import com.staj.biletbul.mapper.SeatMapper;
 import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.*;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
-import com.staj.biletbul.response.AllUsersOfEventResponse;
-import com.staj.biletbul.response.EventResponse;
-import com.staj.biletbul.response.ResourceDeletedResponse;
-import com.staj.biletbul.response.UserResponse;
+import com.staj.biletbul.response.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +28,7 @@ public class EventService {
     private final UserMapper userMapper;
     private final CityRepository cityRepository;
     private final SeatRepository seatRepository;
+    private final SeatMapper seatMapper;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
@@ -39,7 +38,8 @@ public class EventService {
                         EventMapper eventMapper,
                         UserMapper userMapper,
                         CityRepository cityRepository,
-                        SeatRepository seatRepository) {
+                        SeatRepository seatRepository,
+                        SeatMapper seatMapper) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
@@ -49,6 +49,7 @@ public class EventService {
         this.userMapper = userMapper;
         this.cityRepository = cityRepository;
         this.seatRepository = seatRepository;
+        this.seatMapper = seatMapper;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -94,8 +95,31 @@ public class EventService {
     }
 
     //all seats of event
+    public List<SeatResponse> getAllSeatsOfEvent(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
+
+        List<SeatResponse> seats = event.getSeats()
+                .stream()
+                .map(seatMapper::mapToSeatResponse)
+                .toList();
+
+        return seats;
+    }
 
     //all available seats of event
+    public List<SeatResponse> getAllAvailableSeatsOfEvent(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
+
+        List<SeatResponse> seats = event.getSeats()
+                .stream()
+                .map(seatMapper::mapToSeatResponse)
+                .filter(SeatResponse::isAvailable)
+                .toList();
+
+        return seats;
+    }
 
     @Transactional
     public EventResponse createEvent(CreateEventRequest request) {
@@ -137,6 +161,7 @@ public class EventService {
         for (int i=1; i<request.standardSeats() + 1; i++) {
             Seat seat = new Seat();
             seat.setSeatNumber("S" + i);
+            seat.setSeatPrice(savedEvent.getStandardSeatPrice());
             seat.setSeatType(SeatType.STANDARD);
             seat.setEvent(savedEvent);
             seats.add(seat);
@@ -146,6 +171,7 @@ public class EventService {
         for (int i=1; i<request.vipSeats() + 1; i++) {
             Seat seat = new Seat();
             seat.setSeatNumber("V" + i);
+            seat.setSeatPrice(savedEvent.getVipSeatPrice());
             seat.setSeatType(SeatType.VIP);
             seat.setEvent(savedEvent);
             seats.add(seat);

@@ -5,6 +5,7 @@ import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.response.AllUsersOfEventResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
+import com.staj.biletbul.response.SeatResponse;
 import com.staj.biletbul.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,16 @@ public class EventController {
     @GetMapping("/{id}/users")
     public ResponseEntity<AllUsersOfEventResponse> getAllUsersOfEvent(@PathVariable("id") Long id) {
         return ResponseEntity.ok(eventService.getAllUserOfEvent(id));
+    }
+
+    @GetMapping("/{id}/seats")
+    public ResponseEntity<List<SeatResponse>> getAllSeatsOfEvent(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventService.getAllSeatsOfEvent(id));
+    }
+
+    @GetMapping("/{id}/seats-available")
+    public ResponseEntity<List<SeatResponse>> getAllAvailableSeatsOfEvent(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventService.getAllAvailableSeatsOfEvent(id));
     }
 
     @PostMapping
