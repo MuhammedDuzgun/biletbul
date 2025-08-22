@@ -62,7 +62,9 @@ public class Event implements Serializable {
 
     @OneToMany(mappedBy = "event",
             orphanRemoval = true,
-            fetch = FetchType.LAZY)
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
     private List<Seat> seats = new ArrayList<>();
 
     public Event() {

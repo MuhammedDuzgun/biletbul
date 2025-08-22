@@ -34,6 +34,11 @@ public class User implements Serializable {
     @ManyToMany(mappedBy = "users")
     private List<Event> events = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user",
+            fetch = FetchType.LAZY,
+            orphanRemoval = true)
+    private List<Seat> seats = new ArrayList<>();
+
     public User() {
     }
 
@@ -42,13 +47,15 @@ public class User implements Serializable {
                 String email,
                 String password,
                 List<Event> events,
-                Set<Role> roles) {
+                Set<Role> roles,
+                List<Seat> seats) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
         this.password = password;
         this.events = events;
         this.roles = roles;
+        this.seats = seats;
     }
 
     public Long getId() {
@@ -97,5 +104,13 @@ public class User implements Serializable {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public List<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
     }
 }
