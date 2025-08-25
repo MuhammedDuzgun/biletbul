@@ -5,6 +5,7 @@ import com.staj.biletbul.exception.CityAlreadyExistsException;
 import com.staj.biletbul.exception.CityNotFoundException;
 import com.staj.biletbul.mapper.CityMapper;
 import com.staj.biletbul.mapper.EventMapper;
+import com.staj.biletbul.mapper.VenueMapper;
 import com.staj.biletbul.repository.CityRepository;
 import com.staj.biletbul.request.CreateCityRequest;
 import com.staj.biletbul.response.*;
@@ -19,13 +20,16 @@ public class CityService {
     private final CityRepository cityRepository;
     private final CityMapper cityMapper;
     private final EventMapper eventMapper;
+    private final VenueMapper venueMapper;
 
     public CityService(CityRepository cityRepository,
                        CityMapper cityMapper,
-                       EventMapper eventMapper) {
+                       EventMapper eventMapper,
+                       VenueMapper venueMapper) {
         this.cityRepository = cityRepository;
         this.cityMapper = cityMapper;
         this.eventMapper = eventMapper;
+        this.venueMapper = venueMapper;
     }
 
     public List<CityResponse> getAllCities() {
@@ -60,10 +64,30 @@ public class CityService {
         return response;
     }
 
+    public AllVenuesOfCityResponse getAllVenuesOfCity(Long id) {
+        City city = cityRepository.findById(id)
+                .orElseThrow(()-> new CityNotFoundException("City not found with id " + id));
+
+        List<VenueResponse> venues = city.getVenueList()
+                .stream()
+                .map(venueMapper::mapToVenueResponse)
+                .toList();
+
+        AllVenuesOfCityResponse response = new AllVenuesOfCityResponse(
+                city.getId(),
+                city.getName(),
+                city.getCountry(),
+                city.getPlateNumber(),
+                venues
+        );
+
+        return response;
+    }
+
     @Transactional
     public CityResponse createCity(CreateCityRequest request) {
         if (cityRepository.findByName(request.name()).isPresent()) {
-            throw new CityAlreadyExistsException("city already exists with name " + request.name());
+            throw new CityAlreadyExistsException("city already exists with venueName " + request.name());
         }
         return cityMapper.mapToCityResponse(cityRepository.save(cityMapper.mapToCity(request)));
     }

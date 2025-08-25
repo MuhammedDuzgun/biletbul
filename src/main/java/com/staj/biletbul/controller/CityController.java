@@ -2,6 +2,7 @@ package com.staj.biletbul.controller;
 
 import com.staj.biletbul.request.CreateCityRequest;
 import com.staj.biletbul.response.AllEventsOfCityResponse;
+import com.staj.biletbul.response.AllVenuesOfCityResponse;
 import com.staj.biletbul.response.CityResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.service.CityService;
@@ -34,6 +35,11 @@ public class CityController {
     @GetMapping("/{id}/events")
     public ResponseEntity<AllEventsOfCityResponse> getAllEventsOfCity(@PathVariable("id") Long id) {
         return ResponseEntity.ok(cityService.getAllEventsOfCity(id));
+    }
+
+    @GetMapping("/{id}/venues")
+    public ResponseEntity<AllVenuesOfCityResponse> getAllVenuesOfCity(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(cityService.getAllVenuesOfCity(id));
     }
 
     @PostMapping
