@@ -178,4 +178,23 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(VenueNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleVenueNotFoundException
+            (VenueNotFoundException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setStatus(HttpStatus.NOT_FOUND.value());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(VenueAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> handleVenueAlreadyExistsException
+            (VenueAlreadyExistsException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setStatus(HttpStatus.CONFLICT.value());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 }

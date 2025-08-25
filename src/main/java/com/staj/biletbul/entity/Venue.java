@@ -22,7 +22,9 @@ public class Venue {
 
     @OneToMany(mappedBy = "venue",
             cascade = CascadeType.ALL,
-            orphanRemoval = true)
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
     private List<Event> eventList;
 
     @ManyToOne(fetch = FetchType.LAZY)
