@@ -34,6 +34,13 @@ public class Seat {
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
+    @OneToOne(
+            mappedBy = "seat",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY
+    )
+    private Ticket ticket;
+
     public Seat() {
     }
 
@@ -42,13 +49,15 @@ public class Seat {
                 BigDecimal seatPrice,
                 SeatType seatType,
                 Event event,
-                User user) {
+                User user,
+                Ticket ticket) {
         this.id = id;
         this.seatNumber = seatNumber;
         this.seatPrice = seatPrice;
         this.seatType = seatType;
         this.event = event;
         this.user = user;
+        this.ticket = ticket;
     }
 
     public Long getId() {
@@ -97,5 +106,13 @@ public class Seat {
 
     public void setSeatPrice(BigDecimal seatPrice) {
         this.seatPrice = seatPrice;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
     }
 }

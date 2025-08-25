@@ -71,6 +71,14 @@ public class Event implements Serializable {
     @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 
+    @OneToMany(
+            mappedBy = "event",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
+    private List<Ticket> tickets = new ArrayList<>();
+
     public Event() {
     }
 
@@ -89,7 +97,8 @@ public class Event implements Serializable {
                  Artist artist,
                  City city,
                  List<Seat> seats,
-                 Venue venue) {
+                 Venue venue,
+                 List<Ticket> tickets) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -106,6 +115,7 @@ public class Event implements Serializable {
         this.city = city;
         this.seats = seats;
         this.venue = venue;
+        this.tickets = tickets;
     }
 
     public Long getId() {
@@ -250,5 +260,13 @@ public class Event implements Serializable {
 
     public void setVenue(Venue venue) {
         this.venue = venue;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 }

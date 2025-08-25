@@ -39,6 +39,14 @@ public class User implements Serializable {
             orphanRemoval = true)
     private List<Seat> seats = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "user",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
+    private List<Ticket> tickets = new ArrayList<>();
+
     public User() {
     }
 
@@ -48,7 +56,8 @@ public class User implements Serializable {
                 String password,
                 List<Event> events,
                 Set<Role> roles,
-                List<Seat> seats) {
+                List<Seat> seats,
+                List<Ticket> tickets) {
         this.id = id;
         this.fullName = fullName;
         this.email = email;
@@ -56,6 +65,7 @@ public class User implements Serializable {
         this.events = events;
         this.roles = roles;
         this.seats = seats;
+        this.tickets = tickets;
     }
 
     public Long getId() {
@@ -112,5 +122,13 @@ public class User implements Serializable {
 
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
+    }
+
+    public List<Ticket> getTickets() {
+        return tickets;
+    }
+
+    public void setTickets(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 }
