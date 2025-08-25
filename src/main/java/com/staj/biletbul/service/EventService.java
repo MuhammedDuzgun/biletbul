@@ -29,6 +29,7 @@ public class EventService {
     private final CityRepository cityRepository;
     private final SeatRepository seatRepository;
     private final SeatMapper seatMapper;
+    private final VenueRepository venueRepository;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
@@ -39,7 +40,8 @@ public class EventService {
                         UserMapper userMapper,
                         CityRepository cityRepository,
                         SeatRepository seatRepository,
-                        SeatMapper seatMapper) {
+                        SeatMapper seatMapper,
+                        VenueRepository venueRepository) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
@@ -50,6 +52,7 @@ public class EventService {
         this.cityRepository = cityRepository;
         this.seatRepository = seatRepository;
         this.seatMapper = seatMapper;
+        this.venueRepository = venueRepository;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -131,16 +134,25 @@ public class EventService {
         EventCategory eventCategory = eventCategoryRepository.findByCategoryName
                 (request.eventCategoryName())
                         .orElseThrow(()-> new EventCategoryNotFoundException
-                                        ("Event category not found with name: " +
+                                        ("Event category not found with venueName: " +
                                                 request.eventCategoryName()));
 
         Artist artist = artistRepository.findByName(request.artistName())
                 .orElseThrow(()-> new ArtistNotFoundException
-                        ("Artist not found with name : " + request.artistName()));
+                        ("Artist not found with venueName : " + request.artistName()));
 
         City city = cityRepository.findByName(request.cityName())
-                .orElseThrow(()-> new CityNotFoundException("city with name : " + request.cityName() + " not found"));
+                .orElseThrow(()-> new CityNotFoundException("city with venueName : " + request.cityName() + " not found"));
 
+        Venue venue = venueRepository.findByName(request.venueName())
+                .orElseThrow(()-> new VenueNotFoundException("venue with venueName : " + request.venueName() + " not found"));
+
+        //venue, city'e ait mi
+        if (!venue.getCity().equals(city)) {
+            throw new VenueNotBelongsToCityException("venueName : " + request.venueName() + " is not belong to city");
+        }
+
+        //event title kontrolü
         if (eventRepository.findByTitle(request.title()).isPresent()) {
             throw new EventAlreadyExistsException("Event already exists with title: " + request.title());
         }
@@ -151,6 +163,7 @@ public class EventService {
         event.setEventCategory(eventCategory);
         event.setArtist(artist);
         event.setCity(city);
+        event.setVenue(venue);
 
         Event savedEvent = eventRepository.save(event);
 

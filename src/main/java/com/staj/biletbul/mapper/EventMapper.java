@@ -22,6 +22,7 @@ public class EventMapper {
                 event.getStartTime(),
                 event.getEndTime(),
                 event.getOrganizer().getOrganizerName(),
+                event.getVenue().getName(),
                 event.getEventCategory().getCategoryName(),
                 event.getArtist().getName(),
                 event.getCity().getName()

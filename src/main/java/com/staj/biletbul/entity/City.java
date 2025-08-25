@@ -24,7 +24,14 @@ public class City {
             cascade = CascadeType.ALL,
             orphanRemoval = true,
             fetch = FetchType.LAZY)
-    private List<Event> eventList = new ArrayList<Event>();
+    private List<Event> eventList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "city",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private List<Venue> venueList = new ArrayList<>();
 
     public City() {
     }
@@ -33,12 +40,14 @@ public class City {
                 String name,
                 String country,
                 int plateNumber,
-                List<Event> eventList) {
+                List<Event> eventList,
+                List<Venue> venueList) {
         this.id = id;
         this.name = name;
         this.country = country;
         this.plateNumber = plateNumber;
         this.eventList = eventList;
+        this.venueList = venueList;
     }
 
     public Long getId() {
@@ -79,5 +88,13 @@ public class City {
 
     public void setEventList(List<Event> eventList) {
         this.eventList = eventList;
+    }
+
+    public List<Venue> getVenueList() {
+        return venueList;
+    }
+
+    public void setVenueList(List<Venue> venueList) {
+        this.venueList = venueList;
     }
 }

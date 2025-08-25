@@ -12,6 +12,7 @@ public record CreateEventRequest(String title,
                                  LocalDateTime startTime,
                                  LocalDateTime endTime,
                                  String organizerMail,
+                                 String venueName,
                                  String eventCategoryName,
                                  String artistName,
                                  String cityName) {

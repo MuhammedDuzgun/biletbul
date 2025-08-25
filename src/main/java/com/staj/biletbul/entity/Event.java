@@ -67,6 +67,10 @@ public class Event implements Serializable {
     )
     private List<Seat> seats = new ArrayList<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venue_id", nullable = false)
+    private Venue venue;
+
     public Event() {
     }
 
@@ -84,7 +88,8 @@ public class Event implements Serializable {
                  EventCategory eventCategory,
                  Artist artist,
                  City city,
-                 List<Seat> seats) {
+                 List<Seat> seats,
+                 Venue venue) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -100,6 +105,7 @@ public class Event implements Serializable {
         this.artist = artist;
         this.city = city;
         this.seats = seats;
+        this.venue = venue;
     }
 
     public Long getId() {
@@ -236,5 +242,13 @@ public class Event implements Serializable {
 
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
+    }
+
+    public Venue getVenue() {
+        return venue;
+    }
+
+    public void setVenue(Venue venue) {
+        this.venue = venue;
     }
 }
