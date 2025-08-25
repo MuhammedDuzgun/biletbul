@@ -13,6 +13,7 @@ import com.staj.biletbul.response.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -156,6 +157,20 @@ public class EventService {
         if (eventRepository.findByTitle(request.title()).isPresent()) {
             throw new EventAlreadyExistsException("Event already exists with title: " + request.title());
         }
+
+        //saat uygun mu
+        for (Event event : venue.getEventList()) {
+            LocalDateTime eventStartTime = event.getStartTime();
+            LocalDateTime eventEndTime = event.getEndTime();
+
+            if (request.startTime().isBefore(eventEndTime) && request.endTime().isAfter(eventStartTime)) {
+                throw new EventTimeConflictException("another event already exists with" +
+                        " start time: " + request.startTime() + " and end time: " + request.endTime()
+                        + " at venue : " + request.venueName()
+                );
+            }
+        }
+
 
         Event event = eventMapper.mapToEntity(request);
 
