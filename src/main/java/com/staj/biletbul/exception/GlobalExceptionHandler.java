@@ -207,4 +207,14 @@ public class GlobalExceptionHandler {
         errorResponse.setTimestamp(LocalDateTime.now());
         return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(EventTimeConflictException.class)
+    public ResponseEntity<ErrorResponse> handleEventTimeConflictException
+            (EventTimeConflictException ex) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(ex.getMessage());
+        errorResponse.setStatus(HttpStatus.CONFLICT.value());
+        errorResponse.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(errorResponse, HttpStatus.CONFLICT);
+    }
 }
