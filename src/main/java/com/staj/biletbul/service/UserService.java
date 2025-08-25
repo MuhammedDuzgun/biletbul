@@ -9,6 +9,7 @@ import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.repository.SeatRepository;
+import com.staj.biletbul.repository.TicketRepository;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.CreateUserRequest;
 import com.staj.biletbul.response.AllEventsOfUserResponse;
@@ -30,17 +31,20 @@ public class UserService {
     private final UserMapper userMapper;
     private final EventMapper eventMapper;
     private final SeatRepository seatRepository;
+    private final TicketRepository ticketRepository;
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        UserMapper userMapper,
                        EventMapper eventMapper,
-                       SeatRepository seatRepository) {
+                       SeatRepository seatRepository,
+                       TicketRepository ticketRepository) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.eventMapper = eventMapper;
         this.seatRepository = seatRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     public List<UserResponse> getAllUsers() {
@@ -101,7 +105,10 @@ public class UserService {
         userRepository.deleteUserEvents(id);
 
         //user_roles temizle
-        userToDelete.getRoles().clear();
+        userRepository.deleteUserRoles(id);
+
+        //kullanıcının ticket'lerini sil
+        ticketRepository.deleteTicketsByUserId(id);
 
         //kullanıcının koltuklarını sil
         seatRepository.deleteSeatsByUserId(id);

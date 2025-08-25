@@ -21,8 +21,8 @@ public class EventMapper {
                 event.getVipSeatPrice(),
                 event.getStartTime(),
                 event.getEndTime(),
-                event.getOrganizer().getOrganizerName(),
                 event.getVenue().getName(),
+                event.getOrganizer().getOrganizerName(),
                 event.getEventCategory().getCategoryName(),
                 event.getArtist().getName(),
                 event.getCity().getName()

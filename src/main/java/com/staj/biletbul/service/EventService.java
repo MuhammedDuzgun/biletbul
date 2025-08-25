@@ -31,6 +31,7 @@ public class EventService {
     private final SeatRepository seatRepository;
     private final SeatMapper seatMapper;
     private final VenueRepository venueRepository;
+    private final TicketRepository ticketRepository;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
@@ -42,7 +43,8 @@ public class EventService {
                         CityRepository cityRepository,
                         SeatRepository seatRepository,
                         SeatMapper seatMapper,
-                        VenueRepository venueRepository) {
+                        VenueRepository venueRepository,
+                        TicketRepository ticketRepository) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
@@ -54,6 +56,7 @@ public class EventService {
         this.seatRepository = seatRepository;
         this.seatMapper = seatMapper;
         this.venueRepository = venueRepository;
+        this.ticketRepository = ticketRepository;
     }
 
     public List<EventResponse> getAllEvents() {
@@ -219,6 +222,9 @@ public class EventService {
         //event_users tablosundan sil
         eventRepository.deleteEventUsers(id);
 
+        //event'in biletlerini sil
+        ticketRepository.deleteTicketsByEventId(id);
+
         //koltukları sil
         seatRepository.deleteSeatsByEventId(id);
 
@@ -229,7 +235,9 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponse addUserToEvent(Long eventId, AddUserToEventRequest request) {
+    public TicketResponse addUserToEvent(Long eventId,
+                                         AddUserToEventRequest request) {
+
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(()-> new EventNotFoundException("No event found with id: " + eventId));
 
@@ -253,7 +261,30 @@ public class EventService {
 
         eventRepository.save(event);
 
-        return eventMapper.mapToResponse(event);
+        //ticket olustur
+        Ticket ticket = new Ticket();
+        ticket.setPrice(seat.getSeatPrice());
+        ticket.setEvent(event);
+        ticket.setUser(user);
+        ticket.setSeat(seat);
+
+        ticketRepository.save(ticket);
+
+        return new TicketResponse(
+                user.getFullName(),
+                seat.getSeatPrice(),
+                event.getTitle(),
+                event.getDescription(),
+                event.getStartTime(),
+                event.getEndTime(),
+                event.getVenue().getName(),
+                event.getVenue().getAddress(),
+                event.getOrganizer().getOrganizerName(),
+                event.getArtist().getName(),
+                event.getCity().getName(),
+                seat.getSeatNumber(),
+                seat.getSeatType()
+        );
     }
 
 }

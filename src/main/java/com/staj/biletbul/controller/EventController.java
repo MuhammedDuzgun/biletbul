@@ -2,10 +2,7 @@ package com.staj.biletbul.controller;
 
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
-import com.staj.biletbul.response.AllUsersOfEventResponse;
-import com.staj.biletbul.response.EventResponse;
-import com.staj.biletbul.response.ResourceDeletedResponse;
-import com.staj.biletbul.response.SeatResponse;
+import com.staj.biletbul.response.*;
 import com.staj.biletbul.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -59,8 +56,8 @@ public class EventController {
     }
 
     @PostMapping("/{id}")
-    public ResponseEntity<EventResponse> addUserToEvent(@PathVariable("id") Long eventId,
-                                                        @RequestBody AddUserToEventRequest request) {
+    public ResponseEntity<TicketResponse> addUserToEvent(@PathVariable("id") Long eventId,
+                                                         @RequestBody AddUserToEventRequest request) {
         return new ResponseEntity<>(eventService.addUserToEvent(eventId, request), HttpStatus.CREATED);
     }
 

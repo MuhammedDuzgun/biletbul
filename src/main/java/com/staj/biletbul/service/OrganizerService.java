@@ -7,6 +7,7 @@ import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
 import com.staj.biletbul.exception.OrganizerNotFoundException;
 import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.OrganizerMapper;
+import com.staj.biletbul.repository.EventRepository;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.request.CreateOrganizerRequest;
@@ -28,15 +29,18 @@ public class OrganizerService {
     private final OrganizerMapper organizerMapper;
     private final EventMapper eventMapper;
     private final RoleRepository roleRepository;
+    private final EventRepository eventRepository;
 
     public OrganizerService(OrganizerRepository organizerRepository,
                             OrganizerMapper organizerMapper,
                             EventMapper eventMapper,
-                            RoleRepository roleRepository) {
+                            RoleRepository roleRepository,
+                            EventRepository eventRepository) {
         this.organizerRepository = organizerRepository;
         this.organizerMapper = organizerMapper;
         this.eventMapper = eventMapper;
         this.roleRepository = roleRepository;
+        this.eventRepository = eventRepository;
     }
 
     public List<OrganizerResponse> getAllOrganizers() {
@@ -97,12 +101,14 @@ public class OrganizerService {
                         .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
 
         //organizer'ın event'lerini de sil
-        organizerToDelete.getEventList().clear();
+        eventRepository.deleteEventByOrganizerId(id);
 
         //organizer_roles temizle
-        organizerToDelete.getRoles().clear();
+        organizerRepository.deleteOrganizerRoles(id);
 
+        //organizer sil
         organizerRepository.delete(organizerToDelete);
+
         return new ResourceDeletedResponse("Organizer with id: " + id + " deleted successfully");
     }
 
