@@ -20,4 +20,10 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     @Transactional
     @Query(value = "DELETE FROM events WHERE id = :id", nativeQuery = true)
     void deleteEventById(Long id);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM events WHERE organizer_id = :organizerId", nativeQuery = true)
+    void deleteEventByOrganizerId(Long organizerId);
+
 }
