@@ -67,10 +67,4 @@ public class EventController {
         return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.ACCEPTED);
     }
 
-    @PostMapping("/{id}")
-    public ResponseEntity<TicketResponse> addUserToEvent(@PathVariable("id") Long eventId,
-                                                         @RequestBody AddUserToEventRequest request) {
-        return new ResponseEntity<>(eventService.addUserToEvent(eventId, request), HttpStatus.CREATED);
-    }
-
 }
