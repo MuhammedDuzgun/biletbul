@@ -10,6 +10,8 @@ import com.staj.biletbul.repository.*;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.response.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,12 +61,9 @@ public class EventService {
         this.ticketRepository = ticketRepository;
     }
 
-    public List<EventResponse> getAllEvents() {
-        List<EventResponse> eventResponses = eventRepository.findAll()
-                .stream()
-                .map(eventMapper::mapToResponse)
-                .toList();
-        return eventResponses;
+    public Page<EventResponse> getAllEvents(Pageable pageable) {
+        return eventRepository.findAll(pageable)
+                .map(eventMapper::mapToResponse);
     }
 
     public EventResponse getEventById(Long id) {

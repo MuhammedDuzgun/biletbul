@@ -4,6 +4,8 @@ import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.response.*;
 import com.staj.biletbul.service.EventService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +23,18 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventResponse>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
+    public ResponseEntity<PageResponse<EventResponse>> getAllEvents(Pageable pageable) {
+        Page<EventResponse> pageData = eventService.getAllEvents(pageable);
+
+        PageResponse<EventResponse> response = new PageResponse<>(
+                pageData.getContent(),
+                pageData.getNumber(),
+                pageData.getSize(),
+                pageData.getTotalElements(),
+                pageData.getTotalPages(),
+                pageData.isLast()
+        );
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
