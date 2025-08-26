@@ -74,9 +74,6 @@ public class ArtistService {
         Artist artistToDelete = artistRepository.findById(id)
                 .orElseThrow(() -> new ArtistNotFoundException("Artist not found with id " + id));
 
-        //sanatcinin etkinliklerini de sil:
-        artistToDelete.getEventList().clear();
-
         artistRepository.delete(artistToDelete);
         return new ResourceDeletedResponse("Deleted artist with id " + id);
     }

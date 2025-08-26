@@ -93,9 +93,6 @@ public class VenueService {
         Venue venueToDelete = venueRepository.findById(id)
                 .orElseThrow(() -> new VenueNotFoundException("Venue not found with id : " + id));
 
-        //mekandaki etkinlikleri temizle
-        venueToDelete.getEventList().clear();
-
         venueRepository.delete(venueToDelete);
         return new ResourceDeletedResponse("Venue with id : " + id + " has been deleted");
     }
