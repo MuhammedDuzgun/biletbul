@@ -3,7 +3,9 @@ package com.staj.biletbul.controller;
 import com.staj.biletbul.request.CreateUserRequest;
 import com.staj.biletbul.response.AllEventsOfUserResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
+import com.staj.biletbul.response.TicketResponse;
 import com.staj.biletbul.response.UserResponse;
+import com.staj.biletbul.service.TicketService;
 import com.staj.biletbul.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +18,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final TicketService ticketService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,
+                          TicketService ticketService) {
         this.userService = userService;
+        this.ticketService = ticketService;
     }
 
     @GetMapping
@@ -34,6 +39,11 @@ public class UserController {
     @GetMapping("/{id}/events")
     public ResponseEntity<AllEventsOfUserResponse> getAllEventsOfUser(@PathVariable("id") Long id) {
         return ResponseEntity.ok(userService.getAllEventsOfUser(id));
+    }
+
+    @GetMapping("/{id}/tickets")
+    public ResponseEntity<List<TicketResponse>> getAllTicketsOfUser(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(ticketService.getAllTicketsOfUser(id));
     }
 
     @PostMapping
