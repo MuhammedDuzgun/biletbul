@@ -1,6 +1,5 @@
 package com.staj.biletbul.entity;
 
-import com.staj.biletbul.enums.SeatType;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
@@ -23,9 +22,6 @@ public class Seat {
 
     private BigDecimal seatPrice;
 
-    @Enumerated(EnumType.STRING)
-    private SeatType seatType;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
@@ -47,14 +43,12 @@ public class Seat {
     public Seat(Long id,
                 String seatNumber,
                 BigDecimal seatPrice,
-                SeatType seatType,
                 Event event,
                 User user,
                 Ticket ticket) {
         this.id = id;
         this.seatNumber = seatNumber;
         this.seatPrice = seatPrice;
-        this.seatType = seatType;
         this.event = event;
         this.user = user;
         this.ticket = ticket;
@@ -74,14 +68,6 @@ public class Seat {
 
     public void setSeatNumber(String seatNumber) {
         this.seatNumber = seatNumber;
-    }
-
-    public SeatType getSeatType() {
-        return seatType;
-    }
-
-    public void setSeatType(SeatType seatType) {
-        this.seatType = seatType;
     }
 
     public Event getEvent() {

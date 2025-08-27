@@ -24,6 +24,8 @@ public class Organizer implements Serializable {
 
     private String password;
 
+    private String phoneNumber;
+
     @OneToMany(mappedBy = "organizer",
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY,
@@ -45,12 +47,14 @@ public class Organizer implements Serializable {
                      String fullName,
                      String email,
                      String password,
+                     String phoneNumber,
                      List<Event> eventList,
                      Set<Role> roles) {
         this.id = id;
         this.organizerName = fullName;
         this.email = email;
         this.password = password;
+        this.phoneNumber = phoneNumber;
         this.eventList = eventList;
         this.roles = roles;
     }
@@ -101,5 +105,13 @@ public class Organizer implements Serializable {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

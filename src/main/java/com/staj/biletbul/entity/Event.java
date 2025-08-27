@@ -1,9 +1,10 @@
 package com.staj.biletbul.entity;
 
+import com.staj.biletbul.enums.EventStatus;
+import com.staj.biletbul.enums.EventType;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,21 +21,23 @@ public class Event implements Serializable {
 
     private String description;
 
-    private Integer standardSeats;
-
-    private Integer vipSeats;
-
-    private boolean isAllStandardSeatsReserved = false;
-
-    private boolean isAllVipSeatsReserved = false;
-
-    private BigDecimal standardSeatPrice;
-
-    private BigDecimal vipSeatPrice;
-
     private LocalDateTime startTime;
 
     private LocalDateTime endTime;
+
+    @Enumerated(EnumType.STRING)
+    private EventType eventType;
+
+    @Enumerated(EnumType.STRING)
+    private EventStatus eventStatus;
+
+    @OneToMany(
+            mappedBy = "event",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private List<TicketType> ticketTypes = new ArrayList<>();
 
     @ManyToMany
     @JoinTable(
@@ -53,7 +56,7 @@ public class Event implements Serializable {
     private EventCategory eventCategory;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id", nullable = false)
+    @JoinColumn(name = "artist_id")
     private Artist artist;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -85,12 +88,11 @@ public class Event implements Serializable {
     public Event(Long id,
                  String title,
                  String description,
-                 Integer standardSeats,
-                 Integer vipSeats,
-                 BigDecimal standardSeatPrice,
-                 BigDecimal vipSeatPrice,
                  LocalDateTime startTime,
                  LocalDateTime endTime,
+                 EventType eventType,
+                 EventStatus eventStatus,
+                 List<TicketType> ticketTypes,
                  List<User> users,
                  Organizer organizer,
                  EventCategory eventCategory,
@@ -102,12 +104,11 @@ public class Event implements Serializable {
         this.id = id;
         this.title = title;
         this.description = description;
-        this.vipSeats = vipSeats;
-        this.standardSeats = standardSeats;
-        this.standardSeatPrice = standardSeatPrice;
-        this.vipSeatPrice = vipSeatPrice;
         this.startTime = startTime;
         this.endTime = endTime;
+        this.eventType = eventType;
+        this.eventStatus = eventStatus;
+        this.ticketTypes = ticketTypes;
         this.users = users;
         this.organizer = organizer;
         this.eventCategory = eventCategory;
@@ -134,22 +135,6 @@ public class Event implements Serializable {
         this.description = description;
     }
 
-    public Integer getStandardSeats() {
-        return standardSeats;
-    }
-
-    public void setStandardSeats(Integer standartSeats) {
-        this.standardSeats = standartSeats;
-    }
-
-    public Integer getVipSeats() {
-        return vipSeats;
-    }
-
-    public void setVipSeats(Integer vipSeats) {
-        this.vipSeats = vipSeats;
-    }
-
     public List<User> getUsers() {
         return users;
     }
@@ -164,22 +149,6 @@ public class Event implements Serializable {
 
     public void setOrganizer(Organizer organizer) {
         this.organizer = organizer;
-    }
-
-    public boolean isAllStandardSeatsReserved() {
-        return isAllStandardSeatsReserved;
-    }
-
-    public void setAllStandardSeatsReserved(boolean allStandardSeatsReserved) {
-        isAllStandardSeatsReserved = allStandardSeatsReserved;
-    }
-
-    public boolean isAllVipSeatsReserved() {
-        return isAllVipSeatsReserved;
-    }
-
-    public void setAllVipSeatsReserved(boolean allVipSeatsReserved) {
-        isAllVipSeatsReserved = allVipSeatsReserved;
     }
 
     public EventCategory getEventCategory() {
@@ -204,22 +173,6 @@ public class Event implements Serializable {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
-    }
-
-    public BigDecimal getStandardSeatPrice() {
-        return standardSeatPrice;
-    }
-
-    public void setStandardSeatPrice(BigDecimal standardSeatPrice) {
-        this.standardSeatPrice = standardSeatPrice;
-    }
-
-    public BigDecimal getVipSeatPrice() {
-        return vipSeatPrice;
-    }
-
-    public void setVipSeatPrice(BigDecimal vipSeatPrice) {
-        this.vipSeatPrice = vipSeatPrice;
     }
 
     public Artist getArtist() {
@@ -268,5 +221,29 @@ public class Event implements Serializable {
 
     public void setTickets(List<Ticket> tickets) {
         this.tickets = tickets;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public EventStatus getEventStatus() {
+        return eventStatus;
+    }
+
+    public void setEventStatus(EventStatus eventStatus) {
+        this.eventStatus = eventStatus;
+    }
+
+    public List<TicketType> getTicketTypes() {
+        return ticketTypes;
+    }
+
+    public void setTicketTypes(List<TicketType> ticketTypes) {
+        this.ticketTypes = ticketTypes;
     }
 }

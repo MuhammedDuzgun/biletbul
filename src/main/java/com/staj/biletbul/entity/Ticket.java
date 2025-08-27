@@ -20,6 +20,10 @@ public class Ticket {
     private BigDecimal price;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ticket_type_id", nullable = false)
+    private TicketType ticketType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
@@ -42,11 +46,13 @@ public class Ticket {
 
     public Ticket(Long id,
                   BigDecimal price,
+                  TicketType ticketType,
                   Event event,
                   Seat seat,
                   User user) {
         this.id = id;
         this.price = price;
+        this.ticketType = ticketType;
         this.event = event;
         this.seat = seat;
         this.user = user;
@@ -90,5 +96,13 @@ public class Ticket {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public TicketType getTicketType() {
+        return ticketType;
+    }
+
+    public void setTicketType(TicketType ticketType) {
+        this.ticketType = ticketType;
     }
 }
