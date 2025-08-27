@@ -21,7 +21,7 @@ public class TicketMapper {
                 ticket.getEvent().getArtist().getName(),
                 ticket.getEvent().getCity().getName(),
                 ticket.getSeat().getSeatNumber(),
-                ticket.getSeat().getSeatType()
+                ticket.getTicketType()
         );
         return response;
     }

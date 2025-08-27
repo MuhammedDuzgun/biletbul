@@ -20,7 +20,6 @@ public class SeatMapper {
                 seat.getId(),
                 seat.getSeatNumber(),
                 seat.getSeatPrice(),
-                seat.getSeatType(),
                 seat.getEvent().getTitle(),
                 isSeatAvailable
         );

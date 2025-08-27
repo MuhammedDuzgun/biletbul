@@ -13,12 +13,7 @@ public class EventMapper {
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getStandardSeats(),
-                event.getVipSeats(),
-                event.isAllStandardSeatsReserved(),
-                event.isAllVipSeatsReserved(),
-                event.getStandardSeatPrice(),
-                event.getVipSeatPrice(),
+                event.getEventStatus(),
                 event.getStartTime(),
                 event.getEndTime(),
                 event.getVenue().getName(),
@@ -34,10 +29,8 @@ public class EventMapper {
         Event event = new Event();
         event.setTitle(request.title());
         event.setDescription(request.description());
-        event.setStandardSeats(request.standardSeats());
-        event.setVipSeats(request.vipSeats());
-        event.setStandardSeatPrice(request.standardSeatPrice());
-        event.setVipSeatPrice(request.vipSeatPrice());
+        event.setEventType(request.eventType());
+        event.setTicketTypes(request.ticketTypes());
         event.setStartTime(request.startTime());
         event.setEndTime(request.endTime());
         event.setStartTime(request.startTime());

@@ -12,7 +12,8 @@ public class OrganizerMapper {
         OrganizerResponse response = new OrganizerResponse(
                 organizer.getId(),
                 organizer.getOrganizerName(),
-                organizer.getEmail()
+                organizer.getEmail(),
+                organizer.getPhoneNumber()
         );
         return response;
     }
@@ -22,6 +23,7 @@ public class OrganizerMapper {
         organizer.setEmail(request.email());
         organizer.setOrganizerName(request.organizerName());
         organizer.setPassword(request.password());
+        organizer.setPhoneNumber(request.phoneNumber());
         return organizer;
     }
 
