@@ -1,7 +1,9 @@
 package com.staj.biletbul.controller;
 
+import com.staj.biletbul.enums.EventStatus;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
+import com.staj.biletbul.request.UpdateEventStatusRequest;
 import com.staj.biletbul.response.*;
 import com.staj.biletbul.service.EventService;
 import org.springframework.data.domain.Page;
@@ -60,6 +62,13 @@ public class EventController {
     @PostMapping
     public ResponseEntity<EventResponse> createEvent(@RequestBody CreateEventRequest request) {
         return new ResponseEntity<>(eventService.createEvent(request), HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<EventResponse> updateEventStatus(@PathVariable("id") Long id,
+                                                           @RequestBody UpdateEventStatusRequest request) {
+
+        return new ResponseEntity<>(eventService.updateEventStatus(id, request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
