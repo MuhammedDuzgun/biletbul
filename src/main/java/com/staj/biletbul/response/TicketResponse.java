@@ -1,6 +1,6 @@
 package com.staj.biletbul.response;
 
-import com.staj.biletbul.enums.SeatType;
+import com.staj.biletbul.entity.TicketType;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -17,5 +17,5 @@ public record TicketResponse(String fullName,
                              String artistName,
                              String cityName,
                              String seatNumber,
-                             SeatType seatType) {
+                             TicketType ticketType) {
 }

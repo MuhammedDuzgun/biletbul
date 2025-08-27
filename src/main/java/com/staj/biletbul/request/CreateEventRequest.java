@@ -1,14 +1,15 @@
 package com.staj.biletbul.request;
 
-import java.math.BigDecimal;
+import com.staj.biletbul.entity.TicketType;
+import com.staj.biletbul.enums.EventType;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record CreateEventRequest(String title,
                                  String description,
-                                 Integer standardSeats,
-                                 Integer vipSeats,
-                                 BigDecimal standardSeatPrice,
-                                 BigDecimal vipSeatPrice,
+                                 List<TicketType> ticketTypes,
+                                 EventType eventType,
                                  LocalDateTime startTime,
                                  LocalDateTime endTime,
                                  String organizerMail,
