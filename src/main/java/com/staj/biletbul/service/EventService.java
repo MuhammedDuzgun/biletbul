@@ -1,14 +1,15 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.*;
-import com.staj.biletbul.enums.SeatType;
+import com.staj.biletbul.enums.EventStatus;
+import com.staj.biletbul.enums.EventType;
 import com.staj.biletbul.exception.*;
 import com.staj.biletbul.mapper.EventMapper;
 import com.staj.biletbul.mapper.SeatMapper;
 import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.*;
-import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
+import com.staj.biletbul.request.UpdateEventStatusRequest;
 import com.staj.biletbul.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,6 +27,7 @@ public class EventService {
     private final UserRepository userRepository;
     private final EventCategoryRepository eventCategoryRepository;
     private final ArtistRepository artistRepository;
+    private final TicketTypeRepository ticketTypeRepository;
     private final EventMapper eventMapper;
     private final UserMapper userMapper;
     private final CityRepository cityRepository;
@@ -40,6 +41,7 @@ public class EventService {
                         UserRepository userRepository,
                         EventCategoryRepository eventCategoryRepository,
                         ArtistRepository artistRepository,
+                        TicketTypeRepository ticketTypeRepository,
                         EventMapper eventMapper,
                         UserMapper userMapper,
                         CityRepository cityRepository,
@@ -52,6 +54,7 @@ public class EventService {
         this.userRepository = userRepository;
         this.eventCategoryRepository = eventCategoryRepository;
         this.artistRepository = artistRepository;
+        this.ticketTypeRepository = ticketTypeRepository;
         this.eventMapper = eventMapper;
         this.userMapper = userMapper;
         this.cityRepository = cityRepository;
@@ -85,12 +88,6 @@ public class EventService {
                 event.getId(),
                 event.getTitle(),
                 event.getDescription(),
-                event.getStandardSeats(),
-                event.getVipSeats(),
-                event.isAllStandardSeatsReserved(),
-                event.isAllVipSeatsReserved(),
-                event.getStandardSeatPrice(),
-                event.getVipSeatPrice(),
                 event.getStartTime(),
                 event.getEndTime(),
                 event.getOrganizer().getOrganizerName(),
@@ -165,6 +162,7 @@ public class EventService {
             LocalDateTime eventStartTime = event.getStartTime();
             LocalDateTime eventEndTime = event.getEndTime();
 
+            //todo: aynı saatte aynı mekanda event post edilebiliyor ?
             if (request.startTime().isBefore(eventEndTime) && request.endTime().isAfter(eventStartTime)) {
                 throw new EventTimeConflictException("another event already exists with" +
                         " start time: " + request.startTime() + " and end time: " + request.endTime()
@@ -173,9 +171,17 @@ public class EventService {
             }
         }
 
-
         Event event = eventMapper.mapToEntity(request);
 
+        //ticket type'ları evente ekle
+        List<TicketType> ticketTypes = request.ticketTypes();
+        for (TicketType ticketType : ticketTypes) {
+            ticketType.setEvent(event);
+        }
+
+        event.setTicketTypes(ticketTypes);
+        event.setTicketTypes(request.ticketTypes());
+        event.setEventStatus(EventStatus.PENDING);
         event.setOrganizer(organizer);
         event.setEventCategory(eventCategory);
         event.setArtist(artist);
@@ -184,33 +190,43 @@ public class EventService {
 
         Event savedEvent = eventRepository.save(event);
 
-        //koltuklar
-        List<Seat> seats = new ArrayList<>();
-
-        //standart koltuklar
-        for (int i=1; i<request.standardSeats() + 1; i++) {
-            Seat seat = new Seat();
-            seat.setSeatNumber("S" + i);
-            seat.setSeatPrice(savedEvent.getStandardSeatPrice());
-            seat.setSeatType(SeatType.STANDARD);
-            seat.setEvent(savedEvent);
-            seats.add(seat);
-        }
-
-        //vip koltuklar
-        for (int i=1; i<request.vipSeats() + 1; i++) {
-            Seat seat = new Seat();
-            seat.setSeatNumber("V" + i);
-            seat.setSeatPrice(savedEvent.getVipSeatPrice());
-            seat.setSeatType(SeatType.VIP);
-            seat.setEvent(savedEvent);
-            seats.add(seat);
-        }
-
-        //koltukları ekle
-        seatRepository.saveAll(seats);
-
         return eventMapper.mapToResponse(savedEvent);
+    }
+
+    //todo: devam et
+    @Transactional
+    public EventResponse updateEventStatus(Long id,
+                                           UpdateEventStatusRequest request) {
+
+        Event event = eventRepository.findById(id)
+                .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
+
+        //event'in kabul edilmesi durumu
+        if (request.eventStatus().equals(EventStatus.CONFIRMED)) {
+            //koltuklu düzen
+            if(event.getEventType().equals(EventType.SEATED)) {
+                List<TicketType> ticketTypes = event.getTicketTypes();
+                for (TicketType ticketType : ticketTypes) {
+                    for (int i=1; i<ticketType.getCapacity() + 1; i++) {
+                        Seat seat = new Seat();
+                        seat.setSeatNumber(ticketType.getName() + "-" + i);
+                        seat.setSeatPrice(ticketType.getPrice());
+                        seat.setEvent(event);
+                        seatRepository.save(seat);
+                    }
+                }
+            }
+            event.setEventStatus(request.eventStatus());
+        }
+
+        //event'in iptal edilmesi durumu
+        if (request.eventStatus().equals(EventStatus.CANCELLED)) {
+            event.setEventStatus(request.eventStatus());
+        }
+
+        //todo: bu asamada organizer'a mail gidebilir
+
+        return eventMapper.mapToResponse(event);
     }
 
     @Transactional
@@ -226,6 +242,9 @@ public class EventService {
 
         //koltukları sil
         seatRepository.deleteSeatsByEventId(id);
+
+        //ticket_type'ları sil
+        eventToDelete.getTicketTypes().clear();
 
         //event'i sil
         eventRepository.deleteEventById(id);

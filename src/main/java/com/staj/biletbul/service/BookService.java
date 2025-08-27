@@ -1,13 +1,8 @@
 package com.staj.biletbul.service;
 
-import com.staj.biletbul.entity.Event;
-import com.staj.biletbul.entity.Seat;
-import com.staj.biletbul.entity.Ticket;
-import com.staj.biletbul.entity.User;
-import com.staj.biletbul.exception.EventNotFoundException;
-import com.staj.biletbul.exception.SeatAlreadyTakenException;
-import com.staj.biletbul.exception.SeatNotFoundException;
-import com.staj.biletbul.exception.UserNotFoundException;
+import com.staj.biletbul.entity.*;
+import com.staj.biletbul.enums.EventType;
+import com.staj.biletbul.exception.*;
 import com.staj.biletbul.repository.EventRepository;
 import com.staj.biletbul.repository.SeatRepository;
 import com.staj.biletbul.repository.TicketRepository;
@@ -35,6 +30,7 @@ public class BookService {
         this.ticketRepository = ticketRepository;
     }
 
+    //todo: event koltuklu mu ? koltuksuz mu ?
     @Transactional
     public TicketResponse addUserToEvent(AddUserToEventRequest request) {
 
@@ -48,6 +44,49 @@ public class BookService {
 
         Seat seat = seatRepository.findByEventAndSeatNumber(event, request.seatNumber())
                 .orElseThrow(()-> new SeatNotFoundException("Seat not found with id : " + request.seatNumber()));
+
+        //genel duzen icin bilet olusturma
+        if (event.getEventType() == EventType.GENERAL_ADMISSION) {
+            for (TicketType ticketType : event.getTicketTypes()) {
+                if (ticketType.getName().equals(request.ticketType().getName())) {
+                    if(ticketType.getCapacity() > 0) {
+                        Ticket ticket = new Ticket();
+                        ticket.setPrice(ticketType.getPrice());
+                        ticket.setEvent(event);
+                        ticket.setUser(user);
+
+                        ticketRepository.save(ticket);
+
+                        //todo: kapasite 0 olmussa dusurmemek gerek ?
+                        ticketType.setCapacity(ticketType.getCapacity() - 1);
+
+                        eventRepository.save(event);
+                        return new TicketResponse(
+                                user.getFullName(),
+                                seat.getSeatPrice(),
+                                event.getTitle(),
+                                event.getDescription(),
+                                event.getStartTime(),
+                                event.getEndTime(),
+                                event.getVenue().getName(),
+                                event.getVenue().getAddress(),
+                                event.getOrganizer().getOrganizerName(),
+                                event.getArtist().getName(),
+                                event.getCity().getName(),
+                                seat.getSeatNumber(),
+                                seat.getTicket().getTicketType()
+                        );
+                    } else {
+                        throw new AllTicketsReservedException("All tickets reserved in : " + request.ticketType().getName());
+                    }
+                }
+            }
+        }
+
+        //koltuklu etkinlikler icin
+        if (event.getEventType() == EventType.SEATED) {
+
+        }
 
         //secilen koltuk musait mi
         if (seat.getUser() != null) {
@@ -84,7 +123,7 @@ public class BookService {
                 event.getArtist().getName(),
                 event.getCity().getName(),
                 seat.getSeatNumber(),
-                seat.getSeatType()
+                seat.getTicket().getTicketType()
         );
     }
 
