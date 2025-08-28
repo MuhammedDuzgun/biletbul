@@ -2,13 +2,14 @@ package com.staj.biletbul.entity;
 
 import jakarta.persistence.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "ticket_types")
-public class TicketType {
+public class TicketType implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +33,14 @@ public class TicketType {
     )
     private List<Ticket> tickets = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "ticketType",
+            cascade = CascadeType.ALL,
+            fetch = FetchType.LAZY,
+            orphanRemoval = true
+    )
+    private List<Seat> seats = new ArrayList<>();
+
     public TicketType() {
     }
 
@@ -40,13 +49,15 @@ public class TicketType {
                       BigDecimal price,
                       int capacity,
                       Event event,
-                      List<Ticket> tickets) {
+                      List<Ticket> tickets,
+                      List<Seat> seats) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.capacity = capacity;
         this.event = event;
         this.tickets = tickets;
+        this.seats = seats;
     }
 
     public Long getId() {
@@ -95,5 +106,13 @@ public class TicketType {
 
     public void setTickets(List<Ticket> tickets) {
         this.tickets = tickets;
+    }
+
+    public List<Seat> getSeats() {
+        return seats;
+    }
+
+    public void setSeats(List<Seat> seats) {
+        this.seats = seats;
     }
 }

@@ -33,7 +33,7 @@ public class Ticket {
     )
     @JoinColumn(
             name = "seat_id",
-            nullable = false
+            nullable = true
     )
     private Seat seat;
 
