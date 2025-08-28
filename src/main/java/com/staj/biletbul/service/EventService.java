@@ -180,7 +180,6 @@ public class EventService {
         }
 
         event.setTicketTypes(ticketTypes);
-        event.setTicketTypes(request.ticketTypes());
         event.setEventStatus(EventStatus.PENDING);
         event.setOrganizer(organizer);
         event.setEventCategory(eventCategory);
@@ -193,7 +192,6 @@ public class EventService {
         return eventMapper.mapToResponse(savedEvent);
     }
 
-    //todo: devam et
     @Transactional
     public EventResponse updateEventStatus(Long id,
                                            UpdateEventStatusRequest request) {
@@ -211,6 +209,7 @@ public class EventService {
                         Seat seat = new Seat();
                         seat.setSeatNumber(ticketType.getName() + "-" + i);
                         seat.setSeatPrice(ticketType.getPrice());
+                        seat.setTicketType(ticketType);
                         seat.setEvent(event);
                         seatRepository.save(seat);
                     }
