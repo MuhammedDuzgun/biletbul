@@ -9,19 +9,21 @@ import org.springframework.stereotype.Component;
 public class EventMapper {
 
     public EventResponse mapToResponse(Event event) {
-        EventResponse response = new EventResponse(
-                event.getId(),
-                event.getTitle(),
-                event.getDescription(),
-                event.getEventStatus(),
-                event.getStartTime(),
-                event.getEndTime(),
-                event.getVenue().getName(),
-                event.getOrganizer().getOrganizerName(),
-                event.getEventCategory().getCategoryName(),
-                event.getArtist().getName(),
-                event.getCity().getName()
-        );
+        EventResponse response = new EventResponse();
+        response.setId(event.getId());
+        response.setTitle(event.getTitle());
+        response.setDescription(event.getDescription());
+        response.setStatus(event.getEventStatus());
+        response.setStartTime(event.getStartTime());
+        response.setEndTime(event.getEndTime());
+        response.setVenueName(event.getVenue().getName());
+        response.setOrganizerName(event.getOrganizer().getOrganizerName());
+        response.setEventCategoryName(event.getEventCategory().getCategoryName());
+        if (event.getArtist() != null) {
+            response.setArtistName(event.getArtist().getName()); //todo: kontrol ?
+        }
+        response.setCityName(event.getCity().getName());
+
         return response;
     }
 
