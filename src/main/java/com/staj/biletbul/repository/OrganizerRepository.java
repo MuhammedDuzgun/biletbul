@@ -9,8 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 public interface OrganizerRepository extends JpaRepository<Organizer, Long> {
+
     Optional<Organizer> findByEmail(String email);
+
     Optional<Organizer> findByOrganizerName(String organizerName);
+
+    boolean existsByEmail(String email);
 
     @Modifying
     @Transactional
