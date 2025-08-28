@@ -1,7 +1,6 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.enums.EventStatus;
-import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.request.UpdateEventStatusRequest;
 import com.staj.biletbul.response.*;
@@ -27,6 +26,23 @@ public class EventController {
     @GetMapping
     public ResponseEntity<PageResponse<EventResponse>> getAllEvents(Pageable pageable) {
         Page<EventResponse> pageData = eventService.getAllEvents(pageable);
+
+        PageResponse<EventResponse> response = new PageResponse<>(
+                pageData.getContent(),
+                pageData.getNumber(),
+                pageData.getSize(),
+                pageData.getTotalElements(),
+                pageData.getTotalPages(),
+                pageData.isLast()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/event-status")
+    public ResponseEntity<PageResponse<EventResponse>> getAllEventsByEventStatus(Pageable pageable,
+                                                                                 @RequestParam EventStatus eventStatus) {
+
+        Page<EventResponse> pageData = eventService.getAllEventsByEventStatus(pageable, eventStatus);
 
         PageResponse<EventResponse> response = new PageResponse<>(
                 pageData.getContent(),

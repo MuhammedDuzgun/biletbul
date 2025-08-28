@@ -69,6 +69,13 @@ public class EventService {
                 .map(eventMapper::mapToResponse);
     }
 
+    //get all active events
+    public Page<EventResponse> getAllEventsByEventStatus(Pageable pageable,
+                                                         EventStatus eventStatus) {
+        return eventRepository.findAllByEndTimeAfterAndEventStatus(pageable,LocalDateTime.now(),eventStatus)
+                .map(eventMapper::mapToResponse);
+    }
+
     public EventResponse getEventById(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
@@ -137,15 +144,18 @@ public class EventService {
                                         ("Event category not found with venueName: " +
                                                 request.eventCategoryName()));
 
-        Artist artist = artistRepository.findByName(request.artistName())
-                .orElseThrow(()-> new ArtistNotFoundException
-                        ("Artist not found with venueName : " + request.artistName()));
-
         City city = cityRepository.findByName(request.cityName())
                 .orElseThrow(()-> new CityNotFoundException("city with venueName : " + request.cityName() + " not found"));
 
         Venue venue = venueRepository.findByName(request.venueName())
                 .orElseThrow(()-> new VenueNotFoundException("venue with venueName : " + request.venueName() + " not found"));
+
+        Artist artist = null;
+        if (request.artistName() != null && !request.artistName().isEmpty()) {
+            artist = artistRepository.findByName(request.artistName())
+                    .orElseThrow(()-> new ArtistNotFoundException
+                            ("Artist not found with venueName : " + request.artistName()));
+        }
 
         //venue, city'e ait mi
         if (!venue.getCity().equals(city)) {
