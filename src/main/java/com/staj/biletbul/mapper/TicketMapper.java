@@ -2,12 +2,20 @@ package com.staj.biletbul.mapper;
 
 import com.staj.biletbul.entity.Ticket;
 import com.staj.biletbul.response.TicketResponse;
+import com.staj.biletbul.response.TicketTypeResponse;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TicketMapper {
 
     public TicketResponse mapToTicketResponse(Ticket ticket) {
+
+        TicketTypeResponse typeResponse = new TicketTypeResponse(
+                ticket.getId(),
+                ticket.getTicketType().getName(),
+                ticket.getPrice()
+        );
+
         TicketResponse response = new TicketResponse(
                 ticket.getUser().getFullName(),
                 ticket.getPrice(),
@@ -21,7 +29,7 @@ public class TicketMapper {
                 ticket.getEvent().getArtist().getName(),
                 ticket.getEvent().getCity().getName(),
                 ticket.getSeat().getSeatNumber(),
-                ticket.getTicketType()
+                typeResponse
         );
         return response;
     }
