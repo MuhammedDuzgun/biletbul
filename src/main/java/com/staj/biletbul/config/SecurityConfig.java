@@ -47,6 +47,16 @@ public class SecurityConfig {
                     request.requestMatchers(HttpMethod.GET, "/api/organizers/{id}").permitAll();
                     request.requestMatchers(HttpMethod.DELETE, "/api/organizers/{id}").hasRole("ORGANIZER");
                     request.requestMatchers(HttpMethod.GET, "/api/organizers/{id}/events").permitAll();
+                    request.requestMatchers(HttpMethod.GET, "/api/events").permitAll();
+                    request.requestMatchers(HttpMethod.POST, "/api/events").hasRole("ORGANIZER");
+                    request.requestMatchers(HttpMethod.GET, "/api/events/event-status").permitAll();
+                    request.requestMatchers(HttpMethod.GET,  "/api/events/{id}").permitAll();
+                    request.requestMatchers(HttpMethod.PUT, "/api/events/{id}").hasRole("ADMIN");
+                    request.requestMatchers(HttpMethod.DELETE, "/api/events/{id}").hasRole("ORGANIZER");
+                    request.requestMatchers(HttpMethod.GET, "/api/events/{id}/seats").permitAll();
+                    request.requestMatchers(HttpMethod.GET, "/api/events/{id}/seats-available").permitAll();
+                    request.requestMatchers(HttpMethod.GET, "/api/events/{id}/users").hasRole("ORGANIZER");
+
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
