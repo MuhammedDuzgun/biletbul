@@ -11,6 +11,7 @@ import com.staj.biletbul.repository.*;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.request.UpdateEventStatusRequest;
 import com.staj.biletbul.response.*;
+import com.staj.biletbul.security.CustomUserDetails;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -82,9 +83,20 @@ public class EventService {
         return eventMapper.mapToResponse(event);
     }
 
-    public AllUsersOfEventResponse getAllUserOfEvent(Long id) {
+    public AllUsersOfEventResponse getAllUserOfEvent(CustomUserDetails userDetails,
+                                                     Long id) {
+        //organizer'ı al
+        Organizer organizer = organizerRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(()-> new OrganizerNotFoundException
+                        ("Organizer with mail : " + userDetails.getUsername() + " not found"));
+        //Event'i al
         Event event = eventRepository.findById(id)
                 .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
+
+        //Event, organizer'ı ait mi
+        if (! event.getOrganizer().getEmail().equals(organizer.getEmail())) {
+            throw new EventNotBelongsToOrganizerException("kullanıcılarını gormeye calistigin event sana ait degil");
+        }
 
         List<UserResponse> userResponses = event.getUsers()
                 .stream()
@@ -132,11 +144,12 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponse createEvent(CreateEventRequest request) {
+    public EventResponse createEvent(CustomUserDetails userDetails,
+                                     CreateEventRequest request) {
 
-        Organizer organizer = organizerRepository.findByEmail(request.organizerMail())
+        Organizer organizer = organizerRepository.findByEmail(userDetails.getUsername())
                         .orElseThrow(()-> new OrganizerNotFoundException
-                                ("No organizer found with email: " + request.organizerMail()));
+                                ("No organizer found with email: " + userDetails.getUsername()));
 
         EventCategory eventCategory = eventCategoryRepository.findByCategoryName
                 (request.eventCategoryName())
@@ -203,7 +216,8 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponse updateEventStatus(Long id,
+    public EventResponse updateEventStatus(CustomUserDetails userDetails,
+                                           Long id,
                                            UpdateEventStatusRequest request) {
 
         Event event = eventRepository.findById(id)
@@ -239,9 +253,19 @@ public class EventService {
     }
 
     @Transactional
-    public ResourceDeletedResponse deleteEvent(Long id) {
+    public ResourceDeletedResponse deleteEvent(CustomUserDetails userDetails, Long id) {
+        //Organizer'ı al
+        Organizer organizer = organizerRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(()-> new OrganizerNotFoundException
+                        ("Organizer not found with email: " + userDetails.getUsername()));
+        //Event'i al
         Event eventToDelete = eventRepository.findById(id)
                         .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
+
+        //event, organizer'a mı ait
+        if (! eventToDelete.getOrganizer().getEmail().equals(organizer.getEmail())) {
+            throw new EventNotBelongsToOrganizerException("silmeye calistigin event sana ait degil kardas ayık ol");
+        }
 
         //event_users tablosundan sil
         eventRepository.deleteEventUsers(id);

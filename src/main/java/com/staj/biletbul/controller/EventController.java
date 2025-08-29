@@ -4,11 +4,13 @@ import com.staj.biletbul.enums.EventStatus;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.request.UpdateEventStatusRequest;
 import com.staj.biletbul.response.*;
+import com.staj.biletbul.security.CustomUserDetails;
 import com.staj.biletbul.service.EventService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -61,8 +63,9 @@ public class EventController {
     }
 
     @GetMapping("/{id}/users")
-    public ResponseEntity<AllUsersOfEventResponse> getAllUsersOfEvent(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(eventService.getAllUserOfEvent(id));
+    public ResponseEntity<AllUsersOfEventResponse> getAllUsersOfEvent(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                      @PathVariable("id") Long id) {
+        return ResponseEntity.ok(eventService.getAllUserOfEvent(userDetails, id));
     }
 
     @GetMapping("/{id}/seats")
@@ -76,20 +79,23 @@ public class EventController {
     }
 
     @PostMapping
-    public ResponseEntity<EventResponse> createEvent(@RequestBody CreateEventRequest request) {
-        return new ResponseEntity<>(eventService.createEvent(request), HttpStatus.CREATED);
+    public ResponseEntity<EventResponse> createEvent(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                     @RequestBody CreateEventRequest request) {
+        return new ResponseEntity<>(eventService.createEvent(userDetails, request), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventResponse> updateEventStatus(@PathVariable("id") Long id,
+    public ResponseEntity<EventResponse> updateEventStatus(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                           @PathVariable("id") Long id,
                                                            @RequestBody UpdateEventStatusRequest request) {
 
-        return new ResponseEntity<>(eventService.updateEventStatus(id, request), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.updateEventStatus(userDetails, id, request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ResourceDeletedResponse> deleteEventById(@PathVariable("id") Long id) {
-        return new ResponseEntity<>(eventService.deleteEvent(id), HttpStatus.ACCEPTED);
+    public ResponseEntity<ResourceDeletedResponse> deleteEventById(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                   @PathVariable("id") Long id) {
+        return new ResponseEntity<>(eventService.deleteEvent(userDetails, id), HttpStatus.ACCEPTED);
     }
 
 }
