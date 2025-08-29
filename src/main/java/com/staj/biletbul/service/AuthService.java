@@ -9,6 +9,7 @@ import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.LoginRequest;
 import com.staj.biletbul.request.SignupRequest;
+import com.staj.biletbul.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,17 +24,20 @@ import java.util.Set;
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final OrganizerRepository organizerRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
     public AuthService(AuthenticationManager authenticationManager,
+                       JwtTokenProvider jwtTokenProvider,
                        UserRepository userRepository,
                        OrganizerRepository organizerRepository,
                        RoleRepository roleRepository,
                        PasswordEncoder passwordEncoder) {
         this.authenticationManager = authenticationManager;
+        this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
         this.organizerRepository = organizerRepository;
         this.roleRepository = roleRepository;
@@ -45,8 +49,14 @@ public class AuthService {
                 loginRequest.email(),
                 loginRequest.password()
         ));
+
+        //token olustur
+        String token = jwtTokenProvider.generateToken(authentication);
+
+        //set auth
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return "authenticated";
+
+        return token;
     }
 
     //todo : mutlaka test et ve revize et

@@ -2,6 +2,7 @@ package com.staj.biletbul.controller;
 
 import com.staj.biletbul.request.LoginRequest;
 import com.staj.biletbul.request.SignupRequest;
+import com.staj.biletbul.response.JwtAuthResponse;
 import com.staj.biletbul.service.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,9 +21,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
-        String message = authService.login(request);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<JwtAuthResponse> login(@RequestBody LoginRequest request) {
+        String token = authService.login(request);
+        JwtAuthResponse response = new JwtAuthResponse();
+        response.setToken(token);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/signup")
