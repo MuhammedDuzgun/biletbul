@@ -36,17 +36,21 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
+                    //general
                     request.requestMatchers("/v3/**").permitAll();
                     request.requestMatchers("/api/auth/**").permitAll();
+                    //users
                     request.requestMatchers(HttpMethod.GET, "/api/users").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/api/users/{id}").permitAll();
                     request.requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("USER");
                     request.requestMatchers(HttpMethod.GET, "/api/users/{id}/events").hasRole("USER");
                     request.requestMatchers(HttpMethod.GET, "/api/users/{id}/tickets").hasRole("USER");
+                    //organizers
                     request.requestMatchers(HttpMethod.GET, "/api/organizers").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/api/organizers/{id}").permitAll();
                     request.requestMatchers(HttpMethod.DELETE, "/api/organizers/{id}").hasRole("ORGANIZER");
                     request.requestMatchers(HttpMethod.GET, "/api/organizers/{id}/events").permitAll();
+                    //events
                     request.requestMatchers(HttpMethod.GET, "/api/events").permitAll();
                     request.requestMatchers(HttpMethod.POST, "/api/events").hasRole("ORGANIZER");
                     request.requestMatchers(HttpMethod.GET, "/api/events/event-status").permitAll();
@@ -56,11 +60,18 @@ public class SecurityConfig {
                     request.requestMatchers(HttpMethod.GET, "/api/events/{id}/seats").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/api/events/{id}/seats-available").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/api/events/{id}/users").hasRole("ORGANIZER");
+                    //event-categories
                     request.requestMatchers(HttpMethod.GET, "/api/event-categories").permitAll();
                     request.requestMatchers(HttpMethod.POST, "/api/event-categories").hasRole("ADMIN");
                     request.requestMatchers(HttpMethod.GET, "/api/event-categories/{id}").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/api/event-categories/{id}/events").permitAll();
                     request.requestMatchers(HttpMethod.DELETE, "/api/event-categories/{id}").hasRole("ADMIN");
+                    //artists
+                    request.requestMatchers(HttpMethod.GET, "/api/artists").permitAll();
+                    request.requestMatchers(HttpMethod.POST, "/api/artists").hasRole("ADMIN");
+                    request.requestMatchers(HttpMethod.GET, "/api/artists/{id}").permitAll();
+                    request.requestMatchers(HttpMethod.DELETE, "/api/artists/{id}").hasRole("ADMIN");
+                    request.requestMatchers(HttpMethod.GET, "/api/artists/{id}/events").permitAll();
 
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
