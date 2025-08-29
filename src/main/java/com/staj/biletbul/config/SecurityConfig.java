@@ -85,7 +85,8 @@ public class SecurityConfig {
                     request.requestMatchers(HttpMethod.GET, "/api/venues/{id}").permitAll();
                     request.requestMatchers(HttpMethod.DELETE, "/api/venues/{id}").hasRole("ADMIN");
                     request.requestMatchers(HttpMethod.GET, "/api/venues/{id}/events").permitAll();
-
+                    //books
+                    request.requestMatchers(HttpMethod.POST, "/api/books").hasRole("USER");
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
