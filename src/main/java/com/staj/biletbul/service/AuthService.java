@@ -4,11 +4,13 @@ import com.staj.biletbul.entity.Organizer;
 import com.staj.biletbul.entity.Role;
 import com.staj.biletbul.entity.User;
 import com.staj.biletbul.enums.RoleName;
+import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.LoginRequest;
-import com.staj.biletbul.request.SignupRequest;
+import com.staj.biletbul.request.SignupAsOrganizerRequest;
+import com.staj.biletbul.request.SignupAsUserRequest;
 import com.staj.biletbul.security.JwtTokenProvider;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -59,46 +61,47 @@ public class AuthService {
         return token;
     }
 
-    //todo : mutlaka test et ve revize et
-    public String signup(SignupRequest signupRequest) {
-        switch (signupRequest.role()) {
-            case "USER" :
-                if (userRepository.existsByEmail(signupRequest.email())) {
-                    return "email already in use";
-                }
-                User user = new User();
-                user.setFullName(signupRequest.fullName());
-                user.setEmail(signupRequest.email());
-                user.setPassword(passwordEncoder.encode(signupRequest.password()));
-
-                Set<Role> roles = new HashSet<>();
-                Role roleUser = roleRepository.findByRoleName(RoleName.ROLE_USER);
-                roles.add(roleUser);
-
-                user.setRoles(roles);
-                userRepository.save(user);
-                return "success";
-
-            case "ORGANIZER" :
-                if (organizerRepository.existsByEmail(signupRequest.email())) {
-                    return "email already in use";
-                }
-                Organizer organizer = new Organizer();
-                organizer.setPhoneNumber("111 111 111 111");
-                organizer.setEmail(signupRequest.email());
-                organizer.setPassword(passwordEncoder.encode(signupRequest.password()));
-
-                Set<Role> rolesOfOrganizer = new HashSet<>();
-                Role roleOrganizer = roleRepository.findByRoleName(RoleName.ROLE_ORGANIZER);
-                rolesOfOrganizer.add(roleOrganizer);
-                organizer.setRoles(rolesOfOrganizer);
-
-                organizerRepository.save(organizer);
-                return "success";
-
-            default:
-                return "error";
+    //signup as user
+    public String signupAsUser(SignupAsUserRequest signupRequest) {
+        if (userRepository.existsByEmail(signupRequest.email())) {
+            return "email already in use";
         }
+        User user = new User();
+        user.setFullName(signupRequest.fullName());
+        user.setEmail(signupRequest.email());
+        user.setPassword(passwordEncoder.encode(signupRequest.password()));
+
+        Set<Role> roles = new HashSet<>();
+        Role roleUser = roleRepository.findByRoleName(RoleName.ROLE_USER);
+        roles.add(roleUser);
+
+        user.setRoles(roles);
+        userRepository.save(user);
+        return "success";
+    }
+
+    //signup as organizer
+    public String signupAsOrganizer(SignupAsOrganizerRequest signupRequest) {
+        if (organizerRepository.existsByEmail(signupRequest.email())) {
+            return "email already in use";
+        }
+        if(organizerRepository.findByOrganizerName(signupRequest.organizerName()).isPresent()) {
+            throw new OrganizerAlreadyExistsException
+                    ("Organizer with name: " + signupRequest.organizerName() + " already exists");
+        }
+        Organizer organizer = new Organizer();
+        organizer.setOrganizerName(signupRequest.organizerName());
+        organizer.setPhoneNumber(signupRequest.phoneNumber());
+        organizer.setEmail(signupRequest.email());
+        organizer.setPassword(passwordEncoder.encode(signupRequest.password()));
+
+        Set<Role> rolesOfOrganizer = new HashSet<>();
+        Role roleOrganizer = roleRepository.findByRoleName(RoleName.ROLE_ORGANIZER);
+        rolesOfOrganizer.add(roleOrganizer);
+        organizer.setRoles(rolesOfOrganizer);
+
+        organizerRepository.save(organizer);
+        return "success";
     }
 
 }

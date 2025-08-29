@@ -1,7 +1,8 @@
 package com.staj.biletbul.controller;
 
 import com.staj.biletbul.request.LoginRequest;
-import com.staj.biletbul.request.SignupRequest;
+import com.staj.biletbul.request.SignupAsOrganizerRequest;
+import com.staj.biletbul.request.SignupAsUserRequest;
 import com.staj.biletbul.response.JwtAuthResponse;
 import com.staj.biletbul.service.AuthService;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +29,15 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody SignupRequest request) {
-        String message = authService.signup(request);
+    @PostMapping("/signup/user")
+    public ResponseEntity<String> signupAsUser(@RequestBody SignupAsUserRequest request) {
+        String message = authService.signupAsUser(request);
         return ResponseEntity.ok(message);
     }
 
+    @PostMapping("/signup/organizer")
+    public ResponseEntity<String> signupAsOrganizer(@RequestBody SignupAsOrganizerRequest request) {
+        String message = authService.signupAsOrganizer(request);
+        return ResponseEntity.ok(message);
+    }
 }
