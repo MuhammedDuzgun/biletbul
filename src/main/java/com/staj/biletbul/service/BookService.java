@@ -8,6 +8,7 @@ import com.staj.biletbul.repository.*;
 import com.staj.biletbul.request.AddUserToEventRequest;
 import com.staj.biletbul.response.TicketResponse;
 import com.staj.biletbul.response.TicketTypeResponse;
+import com.staj.biletbul.security.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +33,8 @@ public class BookService {
     }
 
     @Transactional
-    public TicketResponse addUserToEvent(AddUserToEventRequest request) {
+    public TicketResponse addUserToEvent(CustomUserDetails userDetails,
+                                         AddUserToEventRequest request) {
 
         Event event = eventRepository.findByTitle(request.eventTitle())
                 .orElseThrow(() -> new EventNotFoundException
@@ -45,9 +47,9 @@ public class BookService {
             );
         }
 
-        User user = userRepository.findByEmail(request.email())
+        User user = userRepository.findByEmail(userDetails.getUsername())
                 .orElseThrow(() -> new UserNotFoundException
-                        ("User not found with email " + request.email()));
+                        ("User not found with email " + userDetails.getUsername()));
 
         //genel duzen icin bilet olusturma
         if (event.getEventType() == EventType.GENERAL_ADMISSION) {
@@ -84,7 +86,9 @@ public class BookService {
                 response.setVenueName(event.getVenue().getName());
                 response.setVenueAddress(event.getVenue().getAddress());
                 response.setOrganizerName(event.getOrganizer().getOrganizerName());
-                response.setArtistName(event.getArtist().getName());
+                if (event.getArtist() != null) {
+                    response.setArtistName(event.getArtist().getName());
+                }
                 response.setCityName(event.getCity().getName());
                 response.setTicketType(typeResponse);
 
