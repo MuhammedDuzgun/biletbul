@@ -115,12 +115,11 @@ public class UserService {
     public ResourceDeletedResponse deleteUserById(Long id,
                                                   CustomUserDetails currentUserDetails)
             throws AccessDeniedException {
-        //mail al
-        String loggedInUserEmail = currentUserDetails.getUsername();
 
         //user'ı al
-        User userToDelete = userRepository.findByEmail(loggedInUserEmail)
-                .orElseThrow(()-> new UserNotFoundException("User not found with email: " + loggedInUserEmail));
+        User userToDelete = userRepository.findByEmail(currentUserDetails.getUsername())
+                .orElseThrow(()-> new UserNotFoundException
+                        ("User not found with email: " + currentUserDetails.getUsername()));
 
         //id'ler uyusuyor mu
         if (!userToDelete.getId().equals(id)) {
