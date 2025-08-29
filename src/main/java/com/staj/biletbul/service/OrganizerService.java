@@ -1,8 +1,6 @@
 package com.staj.biletbul.service;
 
 import com.staj.biletbul.entity.Organizer;
-import com.staj.biletbul.entity.Role;
-import com.staj.biletbul.enums.RoleName;
 import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
 import com.staj.biletbul.exception.OrganizerNotFoundException;
 import com.staj.biletbul.mapper.EventMapper;
@@ -10,17 +8,15 @@ import com.staj.biletbul.mapper.OrganizerMapper;
 import com.staj.biletbul.repository.EventRepository;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.repository.RoleRepository;
-import com.staj.biletbul.request.CreateOrganizerRequest;
 import com.staj.biletbul.response.AllEventsOfOrganizerResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.OrganizerResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
+import com.staj.biletbul.security.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class OrganizerService {
@@ -74,31 +70,15 @@ public class OrganizerService {
     }
 
     @Transactional
-    public OrganizerResponse createOrganizer(CreateOrganizerRequest request) {
-        if (organizerRepository.findByEmail(request.email()).isPresent()) {
-            throw new OrganizerAlreadyExistsException
-                    ("Organizer with email: " + request.email() + " already exists");
+    public ResourceDeletedResponse deleteOrganizer(Long id, CustomUserDetails userDetails) {
+        //organizer getir
+        Organizer organizerToDelete = organizerRepository.findByEmail(userDetails.getUsername())
+                .orElseThrow(()-> new OrganizerNotFoundException("organizer not found"));
+
+        //id'ler uyusuyor mu
+        if (! organizerToDelete.getId().equals(id)) {
+            throw new OrganizerAlreadyExistsException("Silmek istedigin organizatör değilsin !");
         }
-        if(organizerRepository.findByOrganizerName(request.organizerName()).isPresent()) {
-            throw new OrganizerAlreadyExistsException
-                    ("Organizer with name: " + request.organizerName() + " already exists");
-        }
-
-        //rol
-        Set<Role> roles = new HashSet<>();
-        Role roleOrganizer = roleRepository.findByRoleName(RoleName.ROLE_ORGANIZER);
-        roles.add(roleOrganizer);
-
-        Organizer organizerToCreate = organizerMapper.mapToEntity(request);
-        organizerToCreate.setRoles(roles);
-
-        return organizerMapper.mapToOrganizerResponse(organizerRepository.save(organizerToCreate));
-    }
-
-    @Transactional
-    public ResourceDeletedResponse deleteOrganizer(Long id) {
-        Organizer organizerToDelete = organizerRepository.findById(id)
-                        .orElseThrow(()-> new OrganizerNotFoundException("Organizer not found with id: " + id));
 
         //organizer'ın event'lerini de sil
         eventRepository.deleteEventByOrganizerId(id);

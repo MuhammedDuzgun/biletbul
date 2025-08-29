@@ -37,13 +37,16 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request -> {
                     request.requestMatchers("/v3/**").permitAll();
+                    request.requestMatchers("/api/auth/**").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/api/users").permitAll();
                     request.requestMatchers(HttpMethod.GET, "/api/users/{id}").permitAll();
                     request.requestMatchers(HttpMethod.DELETE, "/api/users/{id}").hasRole("USER");
                     request.requestMatchers(HttpMethod.GET, "/api/users/{id}/events").hasRole("USER");
                     request.requestMatchers(HttpMethod.GET, "/api/users/{id}/tickets").hasRole("USER");
-                    request.requestMatchers("/api/auth/**").permitAll();
-                    request.requestMatchers("/api/**").authenticated();
+                    request.requestMatchers(HttpMethod.GET, "/api/organizers").permitAll();
+                    request.requestMatchers(HttpMethod.GET, "/api/organizers/{id}").permitAll();
+                    request.requestMatchers(HttpMethod.DELETE, "/api/organizers/{id}").hasRole("ORGANIZER");
+                    request.requestMatchers(HttpMethod.GET, "/api/organizers/{id}/events").permitAll();
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
