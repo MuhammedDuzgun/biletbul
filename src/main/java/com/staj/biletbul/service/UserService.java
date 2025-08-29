@@ -6,19 +6,19 @@ import com.staj.biletbul.enums.RoleName;
 import com.staj.biletbul.exception.UserAlreadyExistsException;
 import com.staj.biletbul.exception.UserNotFoundException;
 import com.staj.biletbul.mapper.EventMapper;
+import com.staj.biletbul.mapper.TicketMapper;
 import com.staj.biletbul.mapper.UserMapper;
 import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.repository.SeatRepository;
 import com.staj.biletbul.repository.TicketRepository;
 import com.staj.biletbul.repository.UserRepository;
 import com.staj.biletbul.request.CreateUserRequest;
-import com.staj.biletbul.response.AllEventsOfUserResponse;
-import com.staj.biletbul.response.EventResponse;
-import com.staj.biletbul.response.ResourceDeletedResponse;
-import com.staj.biletbul.response.UserResponse;
+import com.staj.biletbul.response.*;
+import com.staj.biletbul.security.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.file.AccessDeniedException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,19 +32,22 @@ public class UserService {
     private final EventMapper eventMapper;
     private final SeatRepository seatRepository;
     private final TicketRepository ticketRepository;
+    private final TicketMapper ticketMapper;
 
     public UserService(UserRepository userRepository,
                        RoleRepository roleRepository,
                        UserMapper userMapper,
                        EventMapper eventMapper,
                        SeatRepository seatRepository,
-                       TicketRepository ticketRepository) {
+                       TicketRepository ticketRepository,
+                       TicketMapper ticketMapper) {
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.userMapper = userMapper;
         this.eventMapper = eventMapper;
         this.seatRepository = seatRepository;
         this.ticketRepository = ticketRepository;
+        this.ticketMapper = ticketMapper;
     }
 
     public List<UserResponse> getAllUsers() {
@@ -61,6 +64,7 @@ public class UserService {
         return userMapper.mapToUserResponse(user);
     }
 
+    //kullanıcının kayıtlı oldugu tum event'ler
     public AllEventsOfUserResponse getAllEventsOfUser(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(()-> new UserNotFoundException("User not found with id: " + id));
@@ -77,6 +81,17 @@ public class UserService {
                 events
         );
         return response;
+    }
+
+    //kullanıcının tum biletleri
+    public List<TicketResponse> getAllTicketsOfUser(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(()-> new UserNotFoundException("User not found with id : " + id));
+
+        return user.getTickets()
+                .stream()
+                .map(ticketMapper::mapToTicketResponse)
+                .toList();
     }
 
     @Transactional
@@ -97,9 +112,20 @@ public class UserService {
     }
 
     @Transactional
-    public ResourceDeletedResponse deleteUserById(Long id) {
-        User userToDelete = userRepository.findById(id)
-                .orElseThrow(()-> new UserNotFoundException("User not found with id: " + id));
+    public ResourceDeletedResponse deleteUserById(Long id,
+                                                  CustomUserDetails currentUserDetails)
+            throws AccessDeniedException {
+        //mail al
+        String loggedInUserEmail = currentUserDetails.getUsername();
+
+        //user'ı al
+        User userToDelete = userRepository.findByEmail(loggedInUserEmail)
+                .orElseThrow(()-> new UserNotFoundException("User not found with email: " + loggedInUserEmail));
+
+        //id'ler uyusuyor mu
+        if (!userToDelete.getId().equals(id)) {
+            throw new AccessDeniedException("Bu kullanıcıyı silme yetkiniz bulunmamaktadır");
+        }
 
         //event_users tablosundan sil
         userRepository.deleteUserEvents(id);
