@@ -64,6 +64,13 @@
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
 
+		<!-- spring-boot-starter-mail -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+			<version>3.5.5</version>
+		</dependency>
+
 		<!-- jjwt-api -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
