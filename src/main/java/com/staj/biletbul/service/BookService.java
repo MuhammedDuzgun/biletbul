@@ -42,7 +42,7 @@ public class BookService {
                         ("Event with title " + request.eventTitle() + " not found"));
 
         if (event.getEventStatus().equals(EventStatus.PENDING)
-                || event.getEventStatus().equals(EventStatus.CANCELLED)) {
+                || event.getEventStatus().equals(EventStatus.CANCELED)) {
             throw new EventNotActiveException(
                     "Event with title " + request.eventTitle() + " is not active"
             );
