@@ -186,12 +186,12 @@ public class EventService {
             LocalDateTime eventEndTime = event.getEndTime();
 
             //todo: aynı saatte aynı mekanda event post edilebiliyor ?
-            if (request.startTime().isBefore(eventEndTime) && request.endTime().isAfter(eventStartTime)) {
-                throw new EventTimeConflictException("another event already exists with" +
-                        " start time: " + request.startTime() + " and end time: " + request.endTime()
-                        + " at venue : " + request.venueName()
-                );
-            }
+//            if (request.startTime().isBefore(eventEndTime) && request.endTime().isAfter(eventStartTime)) {
+//                throw new EventTimeConflictException("another event already exists with" +
+//                        " start time: " + request.startTime() + " and end time: " + request.endTime()
+//                        + " at venue : " + request.venueName()
+//                );
+//            }
         }
 
         Event event = eventMapper.mapToEntity(request);

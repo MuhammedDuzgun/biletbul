@@ -3,7 +3,6 @@ package com.staj.biletbul.response;
 import com.staj.biletbul.enums.EventStatus;
 import com.staj.biletbul.enums.EventType;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 public class EventResponse {
@@ -13,8 +12,8 @@ public class EventResponse {
     private String description;
     private EventStatus status;
     private EventType eventType;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+    private String startTime;
+    private String endTime;
     private String venueName;
     private String organizerName;
     private String eventCategoryName;
@@ -25,19 +24,7 @@ public class EventResponse {
     public EventResponse() {
     }
 
-    public EventResponse(Long id,
-                         String title,
-                         String description,
-                         EventStatus status,
-                         EventType eventType,
-                         LocalDateTime startTime,
-                         LocalDateTime endTime,
-                         String venueName,
-                         String organizerName,
-                         String eventCategoryName,
-                         String artistName,
-                         String cityName,
-                         List<TicketTypeResponse> ticketTypes) {
+    public EventResponse(Long id, String title, String description, EventStatus status, EventType eventType, String startTime, String endTime, String venueName, String organizerName, String eventCategoryName, String artistName, String cityName, List<TicketTypeResponse> ticketTypes) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -85,19 +72,27 @@ public class EventResponse {
         this.status = status;
     }
 
-    public LocalDateTime getStartTime() {
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public String getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(LocalDateTime startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() {
+    public String getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalDateTime endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
@@ -139,14 +134,6 @@ public class EventResponse {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
-    }
-
-    public EventType getEventType() {
-        return eventType;
-    }
-
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
     }
 
     public List<TicketTypeResponse> getTicketTypes() {
