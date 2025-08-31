@@ -1,8 +1,10 @@
 package com.staj.biletbul.response;
 
 import com.staj.biletbul.enums.EventStatus;
+import com.staj.biletbul.enums.EventType;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class EventResponse {
 
@@ -10,6 +12,7 @@ public class EventResponse {
     private String title;
     private String description;
     private EventStatus status;
+    private EventType eventType;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String venueName;
@@ -17,6 +20,7 @@ public class EventResponse {
     private String eventCategoryName;
     private String artistName;
     private String cityName;
+    private List<TicketTypeResponse> ticketTypes;
 
     public EventResponse() {
     }
@@ -25,17 +29,20 @@ public class EventResponse {
                          String title,
                          String description,
                          EventStatus status,
+                         EventType eventType,
                          LocalDateTime startTime,
                          LocalDateTime endTime,
                          String venueName,
                          String organizerName,
                          String eventCategoryName,
                          String artistName,
-                         String cityName) {
+                         String cityName,
+                         List<TicketTypeResponse> ticketTypes) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.status = status;
+        this.eventType = eventType;
         this.startTime = startTime;
         this.endTime = endTime;
         this.venueName = venueName;
@@ -43,6 +50,7 @@ public class EventResponse {
         this.eventCategoryName = eventCategoryName;
         this.artistName = artistName;
         this.cityName = cityName;
+        this.ticketTypes = ticketTypes;
     }
 
     public Long getId() {
@@ -131,5 +139,21 @@ public class EventResponse {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(EventType eventType) {
+        this.eventType = eventType;
+    }
+
+    public List<TicketTypeResponse> getTicketTypes() {
+        return ticketTypes;
+    }
+
+    public void setTicketTypes(List<TicketTypeResponse> ticketTypes) {
+        this.ticketTypes = ticketTypes;
     }
 }

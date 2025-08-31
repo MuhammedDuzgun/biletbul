@@ -3,10 +3,19 @@ package com.staj.biletbul.mapper;
 import com.staj.biletbul.entity.Event;
 import com.staj.biletbul.request.CreateEventRequest;
 import com.staj.biletbul.response.EventResponse;
+import com.staj.biletbul.response.TicketTypeResponse;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class EventMapper {
+
+    private final TicketTypeMapper ticketTypeMapper;
+
+    public EventMapper(TicketTypeMapper ticketTypeMapper) {
+        this.ticketTypeMapper = ticketTypeMapper;
+    }
 
     public EventResponse mapToResponse(Event event) {
         EventResponse response = new EventResponse();
@@ -14,6 +23,7 @@ public class EventMapper {
         response.setTitle(event.getTitle());
         response.setDescription(event.getDescription());
         response.setStatus(event.getEventStatus());
+        response.setEventType(event.getEventType());
         response.setStartTime(event.getStartTime());
         response.setEndTime(event.getEndTime());
         response.setVenueName(event.getVenue().getName());
@@ -23,6 +33,12 @@ public class EventMapper {
             response.setArtistName(event.getArtist().getName()); //todo: kontrol ?
         }
         response.setCityName(event.getCity().getName());
+
+        List<TicketTypeResponse> ticketTypes = event.getTicketTypes()
+                .stream()
+                .map(ticketTypeMapper::mapToTicketTypeResponse)
+                .toList();
+        response.setTicketTypes(ticketTypes);
 
         return response;
     }

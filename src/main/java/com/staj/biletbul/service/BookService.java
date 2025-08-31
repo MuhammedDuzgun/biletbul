@@ -24,7 +24,8 @@ public class BookService {
     public BookService(EventRepository eventRepository,
                        UserRepository userRepository,
                        SeatRepository seatRepository,
-                       TicketRepository ticketRepository, TicketTypeRepository ticketTypeRepository) {
+                       TicketRepository ticketRepository,
+                       TicketTypeRepository ticketTypeRepository) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
         this.seatRepository = seatRepository;
