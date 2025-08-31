@@ -225,6 +225,10 @@ public class EventService {
 
         //event'in kabul edilmesi durumu
         if (request.eventStatus().equals(EventStatus.CONFIRMED)) {
+            //event mevcut hali ile zaten onaylı mı
+            if (event.getEventStatus().equals(EventStatus.CONFIRMED)) {
+                throw new EventAlreadyConfirmedException("Event already confirmed");
+            }
             //koltuklu düzen
             if(event.getEventType().equals(EventType.SEATED)) {
                 List<TicketType> ticketTypes = event.getTicketTypes();
