@@ -36,6 +36,7 @@ public class EventService {
     private final SeatMapper seatMapper;
     private final VenueRepository venueRepository;
     private final TicketRepository ticketRepository;
+    private final EmailService emailService;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
@@ -49,7 +50,8 @@ public class EventService {
                         SeatRepository seatRepository,
                         SeatMapper seatMapper,
                         VenueRepository venueRepository,
-                        TicketRepository ticketRepository) {
+                        TicketRepository ticketRepository,
+                        EmailService emailService) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
@@ -63,6 +65,7 @@ public class EventService {
         this.seatMapper = seatMapper;
         this.venueRepository = venueRepository;
         this.ticketRepository = ticketRepository;
+        this.emailService = emailService;
     }
 
     public Page<EventResponse> getAllEvents(Pageable pageable) {
@@ -223,6 +226,7 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
 
+        //todo: pending-confirmed-canceled-confirmed durumunda patlıyor cunku koltuklar duplicate oluyor
         //event'in kabul edilmesi durumu
         if (request.eventStatus().equals(EventStatus.CONFIRMED)) {
             //event mevcut hali ile zaten onaylı mı
@@ -247,11 +251,17 @@ public class EventService {
         }
 
         //event'in iptal edilmesi durumu
-        if (request.eventStatus().equals(EventStatus.CANCELLED)) {
+        if (request.eventStatus().equals(EventStatus.CANCELED)) {
             event.setEventStatus(request.eventStatus());
         }
 
-        //todo: bu asamada organizer'a mail gidebilir
+        emailService.sendSimpleMail(
+                event.getOrganizer().getEmail(),
+                "Etkinlik Durumu Güncellemesi",
+                "Düzenlemek istediğiniz " + event.getTitle()
+                        + " başlıklı etkinliğin durumu " + event.getEventStatus().toString().toUpperCase()
+                        + " olarak güncelenmiştir."
+        );
 
         return eventMapper.mapToResponse(event);
     }
