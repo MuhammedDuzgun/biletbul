@@ -38,6 +38,7 @@ public class EventService {
     private final VenueRepository venueRepository;
     private final TicketRepository ticketRepository;
     private final EmailService emailService;
+    private final AdminRepository adminRepository;
 
     public EventService(EventRepository eventRepository,
                         OrganizerRepository organizerRepository,
@@ -52,7 +53,7 @@ public class EventService {
                         SeatMapper seatMapper,
                         VenueRepository venueRepository,
                         TicketRepository ticketRepository,
-                        EmailService emailService) {
+                        EmailService emailService, AdminRepository adminRepository) {
         this.eventRepository = eventRepository;
         this.organizerRepository = organizerRepository;
         this.userRepository = userRepository;
@@ -67,6 +68,7 @@ public class EventService {
         this.venueRepository = venueRepository;
         this.ticketRepository = ticketRepository;
         this.emailService = emailService;
+        this.adminRepository = adminRepository;
     }
 
     public Page<EventResponse> getAllEvents(Pageable pageable) {
@@ -220,6 +222,18 @@ public class EventService {
         event.setVenue(venue);
 
         Event savedEvent = eventRepository.save(event);
+
+        //adminlere mail yolla
+        List<Admin> admins = adminRepository.findAll();
+        List<String> adminsEmails = new ArrayList<>();
+        for (Admin admin : admins) {
+            adminsEmails.add(admin.getEmail());
+        }
+        for (int i=0; i<admins.size(); i++) {
+            emailService.sendSimpleMail(adminsEmails.get(i),
+                    "Yeni bir event eklendi",
+                    organizer.getOrganizerName() + " isimli organizatör yeni bir etkinlik ekledi");
+        }
 
         return eventMapper.mapToResponse(savedEvent);
     }
