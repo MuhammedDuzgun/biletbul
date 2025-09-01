@@ -9,6 +9,8 @@ import com.staj.biletbul.mapper.VenueMapper;
 import com.staj.biletbul.repository.CityRepository;
 import com.staj.biletbul.request.CreateCityRequest;
 import com.staj.biletbul.response.*;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ public class CityService {
         this.venueMapper = venueMapper;
     }
 
+    @Cacheable(value = "cities")
     public List<CityResponse> getAllCities() {
         return cityRepository.findAll()
                 .stream()
@@ -85,6 +88,7 @@ public class CityService {
     }
 
     @Transactional
+    @CacheEvict(value = "cities", allEntries = true)
     public CityResponse createCity(CreateCityRequest request) {
         if (cityRepository.findByName(request.name()).isPresent()) {
             throw new CityAlreadyExistsException("city already exists with venueName " + request.name());
@@ -93,6 +97,7 @@ public class CityService {
     }
 
     @Transactional
+    @CacheEvict(value = "cities", allEntries = true)
     public ResourceDeletedResponse deleteCityById(Long id) {
         City cityToDelete = cityRepository.findById(id)
                 .orElseThrow(() -> new CityNotFoundException("City not found with id " + id));

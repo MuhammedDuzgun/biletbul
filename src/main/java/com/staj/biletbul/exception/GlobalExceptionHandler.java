@@ -299,7 +299,7 @@ public class GlobalExceptionHandler {
 
         Throwable cause = ex.getCause();
         if (cause instanceof InvalidFormatException) {
-            errorResponse.setMessage("Geçersiz tarih formatı, dogrusu : yyyy-MM-dd HH:mm:ss");
+            errorResponse.setMessage("Geçersiz istek verisi");
             errorResponse.setStatus(HttpStatus.BAD_REQUEST.value());
             errorResponse.setTimestamp(LocalDateTime.now());
             return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);

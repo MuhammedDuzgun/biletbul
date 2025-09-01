@@ -11,6 +11,8 @@ import com.staj.biletbul.response.AllEventsOfArtistResponse;
 import com.staj.biletbul.response.ArtistResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,7 @@ public class ArtistService {
         this.eventMapper = eventMapper;
     }
 
+    @Cacheable(value = "artists")
     public List<ArtistResponse> getAllArtists() {
         return artistRepository.findAll()
                 .stream()
@@ -62,6 +65,7 @@ public class ArtistService {
     }
 
     @Transactional
+    @CacheEvict(value = "artists", allEntries = true)
     public ArtistResponse createArtist(CreateArtistRequest request) {
         if (artistRepository.findByName(request.name()).isPresent()) {
             throw new ArtistAlreadyExistsException("Artist already exists with name " + request.name());
@@ -70,6 +74,7 @@ public class ArtistService {
     }
 
     @Transactional
+    @CacheEvict(value = "artists", allEntries = true)
     public ResourceDeletedResponse deleteArtistById(Long id) {
         Artist artistToDelete = artistRepository.findById(id)
                 .orElseThrow(() -> new ArtistNotFoundException("Artist not found with id " + id));

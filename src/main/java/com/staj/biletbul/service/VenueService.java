@@ -14,6 +14,8 @@ import com.staj.biletbul.response.AllEventsOfVenueResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
 import com.staj.biletbul.response.VenueResponse;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +39,7 @@ public class VenueService {
         this.eventMapper = eventMapper;
     }
 
+    @Cacheable(value = "venues")
     public List<VenueResponse> getAllVenues() {
         List<Venue> venues = venueRepository.findAll();
         return venues
@@ -72,6 +75,7 @@ public class VenueService {
     }
 
     @Transactional
+    @CacheEvict(value = "venues", allEntries = true)
     public VenueResponse createVenue(CreateVenueRequest request) {
         if (venueRepository.existsByName(request.venueName())) {
             throw new VenueAlreadyExistsException("Venue already exist with venueName : " + request.venueName());
@@ -89,6 +93,7 @@ public class VenueService {
     }
 
     @Transactional
+    @CacheEvict(value = "venues", allEntries = true)
     public ResourceDeletedResponse deleteVenueById(Long id) {
         Venue venueToDelete = venueRepository.findById(id)
                 .orElseThrow(() -> new VenueNotFoundException("Venue not found with id : " + id));

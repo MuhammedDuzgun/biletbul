@@ -11,6 +11,8 @@ import com.staj.biletbul.response.AllEventsOfEventCategoryResponse;
 import com.staj.biletbul.response.EventCategoryResponse;
 import com.staj.biletbul.response.EventResponse;
 import com.staj.biletbul.response.ResourceDeletedResponse;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +33,7 @@ public class EventCategoryService {
         this.eventMapper = eventMapper;
     }
 
+    @Cacheable(value = "event_categories")
     public List<EventCategoryResponse> findAll() {
         List<EventCategoryResponse> eventCategoryResponses = eventCategoryRepository.findAll()
                 .stream()
@@ -64,6 +67,7 @@ public class EventCategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "event_categories", allEntries = true)
     public EventCategoryResponse createEventCategory(CreateEventCategoryRequest request) {
         if (eventCategoryRepository.findByCategoryName(request.categoryName()).isPresent()) {
             throw new EventCategoryAlreadyExistsException("Event category already exists");
@@ -73,6 +77,7 @@ public class EventCategoryService {
     }
 
     @Transactional
+    @CacheEvict(value = "event_categories", allEntries = true)
     public ResourceDeletedResponse deleteEventCategoryById(Long id) {
         EventCategory eventCategoryToDelete = eventCategoryRepository.findById(id)
                 .orElseThrow(()-> new EventCategoryNotFoundException("Event category not found with id: " + id));
