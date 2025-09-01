@@ -161,10 +161,12 @@ public class EventService {
                                                 request.eventCategoryName()));
 
         City city = cityRepository.findByName(request.cityName())
-                .orElseThrow(()-> new CityNotFoundException("city with venueName : " + request.cityName() + " not found"));
+                .orElseThrow(()-> new CityNotFoundException
+                        ("city with venueName : " + request.cityName() + " not found"));
 
         Venue venue = venueRepository.findByName(request.venueName())
-                .orElseThrow(()-> new VenueNotFoundException("venue with venueName : " + request.venueName() + " not found"));
+                .orElseThrow(()-> new VenueNotFoundException
+                        ("venue with venueName : " + request.venueName() + " not found"));
 
         Artist artist = null;
         if (request.artistName() != null && !request.artistName().isEmpty()) {
@@ -183,18 +185,21 @@ public class EventService {
             throw new EventAlreadyExistsException("Event already exists with title: " + request.title());
         }
 
-        //saat uygun mu
-        for (Event event : venue.getEventList()) {
-            LocalDateTime eventStartTime = event.getStartTime();
-            LocalDateTime eventEndTime = event.getEndTime();
+        //girilen saatler mantıklı mı (startTime > endTime kontrolu)
+        if (request.startTime().isAfter(request.endTime())) {
+            throw new IllegalArgumentException("Start time cannot be after end time");
+        }
 
-            //todo: aynı saatte aynı mekanda event post edilebiliyor ?
-//            if (request.startTime().isBefore(eventEndTime) && request.endTime().isAfter(eventStartTime)) {
-//                throw new EventTimeConflictException("another event already exists with" +
-//                        " start time: " + request.startTime() + " and end time: " + request.endTime()
-//                        + " at venue : " + request.venueName()
-//                );
-//            }
+        //venue'da cakisan event var mı?
+        List<Event> conflictingEvents = eventRepository.findConflictingEvents(
+                venue.getId(),
+                request.startTime(),
+                request.endTime()
+        );
+        if (!conflictingEvents.isEmpty()) {
+            throw new EventTimeConflictException("another event already exists with" +
+                        " start time: " + request.startTime() + " and end time: " + request.endTime()
+                        + " at venue : " + request.venueName());
         }
 
         Event event = eventMapper.mapToEntity(request);

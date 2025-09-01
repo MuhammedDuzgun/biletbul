@@ -311,4 +311,14 @@ public class GlobalExceptionHandler {
         }
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgumantException
+            (IllegalArgumentException ex) {
+        ErrorResponse response = new ErrorResponse();
+        response.setMessage(ex.getMessage());
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
+        response.setTimestamp(LocalDateTime.now());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
 }
