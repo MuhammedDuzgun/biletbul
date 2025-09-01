@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -224,14 +225,12 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponse updateEventStatus(CustomUserDetails userDetails,
-                                           Long id,
+    public EventResponse updateEventStatus(Long id,
                                            UpdateEventStatusRequest request) {
 
         Event event = eventRepository.findById(id)
                 .orElseThrow(()-> new EventNotFoundException("No event found with id: " + id));
 
-        //todo: pending-confirmed-canceled-confirmed durumunda patlıyor cunku koltuklar duplicate oluyor
         //event'in kabul edilmesi durumu
         if (request.eventStatus().equals(EventStatus.CONFIRMED)) {
             //event mevcut hali ile zaten onaylı mı
@@ -240,16 +239,21 @@ public class EventService {
             }
             //koltuklu düzen
             if(event.getEventType().equals(EventType.SEATED)) {
-                List<TicketType> ticketTypes = event.getTicketTypes();
-                for (TicketType ticketType : ticketTypes) {
-                    for (int i=1; i<ticketType.getCapacity() + 1; i++) {
-                        Seat seat = new Seat();
-                        seat.setSeatNumber(ticketType.getName() + "-" + i);
-                        seat.setSeatPrice(ticketType.getPrice());
-                        seat.setTicketType(ticketType);
-                        seat.setEvent(event);
-                        seatRepository.save(seat);
+                //daha once koltuklar olusturulmadıysa olustur
+                if (event.getSeats().size() == 0) {
+                    List<TicketType> ticketTypes = event.getTicketTypes();
+                    List<Seat> seatsToSave = new ArrayList<>();
+                    for (TicketType ticketType : ticketTypes) {
+                        for (int i=1; i<ticketType.getCapacity() + 1; i++) {
+                            Seat seat = new Seat();
+                            seat.setSeatNumber(ticketType.getName() + "-" + i);
+                            seat.setSeatPrice(ticketType.getPrice());
+                            seat.setTicketType(ticketType);
+                            seat.setEvent(event);
+                            seatsToSave.add(seat);
+                        }
                     }
+                    seatRepository.saveAll(seatsToSave);
                 }
             }
             event.setEventStatus(request.eventStatus());
@@ -260,6 +264,8 @@ public class EventService {
             event.setEventStatus(request.eventStatus());
         }
 
+        //todo: CALISMASSA MOBIL VERIYE GEC
+        //organizatöre mail at
         emailService.sendSimpleMail(
                 event.getOrganizer().getEmail(),
                 "Etkinlik Durumu Güncellemesi",

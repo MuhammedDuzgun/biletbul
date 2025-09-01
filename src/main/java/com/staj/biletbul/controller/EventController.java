@@ -85,11 +85,10 @@ public class EventController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EventResponse> updateEventStatus(@AuthenticationPrincipal CustomUserDetails userDetails,
-                                                           @PathVariable("id") Long id,
+    public ResponseEntity<EventResponse> updateEventStatus(@PathVariable("id") Long id,
                                                            @RequestBody UpdateEventStatusRequest request) {
 
-        return new ResponseEntity<>(eventService.updateEventStatus(userDetails, id, request), HttpStatus.OK);
+        return new ResponseEntity<>(eventService.updateEventStatus(id, request), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
