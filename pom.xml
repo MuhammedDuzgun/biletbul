@@ -71,6 +71,18 @@
 			<version>3.5.5</version>
 		</dependency>
 
+		<!-- Spring Data Redis -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+
+		<!-- Cache -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+
 		<!-- jjwt-api -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
