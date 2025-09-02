@@ -34,7 +34,7 @@ public class CityService {
         this.venueMapper = venueMapper;
     }
 
-    @Cacheable(value = "cities")
+    //@Cacheable(value = "cities")
     public List<CityResponse> getAllCities() {
         return cityRepository.findAll()
                 .stream()
@@ -88,7 +88,7 @@ public class CityService {
     }
 
     @Transactional
-    @CacheEvict(value = "cities", allEntries = true)
+    //@CacheEvict(value = "cities", allEntries = true)
     public CityResponse createCity(CreateCityRequest request) {
         if (cityRepository.findByName(request.name()).isPresent()) {
             throw new CityAlreadyExistsException("city already exists with venueName " + request.name());
@@ -97,7 +97,7 @@ public class CityService {
     }
 
     @Transactional
-    @CacheEvict(value = "cities", allEntries = true)
+    //@CacheEvict(value = "cities", allEntries = true)
     public ResourceDeletedResponse deleteCityById(Long id) {
         City cityToDelete = cityRepository.findById(id)
                 .orElseThrow(() -> new CityNotFoundException("City not found with id " + id));

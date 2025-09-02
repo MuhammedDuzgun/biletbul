@@ -33,7 +33,7 @@ public class ArtistService {
         this.eventMapper = eventMapper;
     }
 
-    @Cacheable(value = "artists")
+    //@Cacheable(value = "artists")
     public List<ArtistResponse> getAllArtists() {
         return artistRepository.findAll()
                 .stream()
@@ -65,7 +65,7 @@ public class ArtistService {
     }
 
     @Transactional
-    @CacheEvict(value = "artists", allEntries = true)
+    //@CacheEvict(value = "artists", allEntries = true)
     public ArtistResponse createArtist(CreateArtistRequest request) {
         if (artistRepository.findByName(request.name()).isPresent()) {
             throw new ArtistAlreadyExistsException("Artist already exists with name " + request.name());
@@ -74,7 +74,7 @@ public class ArtistService {
     }
 
     @Transactional
-    @CacheEvict(value = "artists", allEntries = true)
+    //@CacheEvict(value = "artists", allEntries = true)
     public ResourceDeletedResponse deleteArtistById(Long id) {
         Artist artistToDelete = artistRepository.findById(id)
                 .orElseThrow(() -> new ArtistNotFoundException("Artist not found with id " + id));

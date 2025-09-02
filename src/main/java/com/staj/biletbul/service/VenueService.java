@@ -39,7 +39,7 @@ public class VenueService {
         this.eventMapper = eventMapper;
     }
 
-    @Cacheable(value = "venues")
+    //@Cacheable(value = "venues")
     public List<VenueResponse> getAllVenues() {
         List<Venue> venues = venueRepository.findAll();
         return venues
@@ -75,7 +75,7 @@ public class VenueService {
     }
 
     @Transactional
-    @CacheEvict(value = "venues", allEntries = true)
+    //@CacheEvict(value = "venues", allEntries = true)
     public VenueResponse createVenue(CreateVenueRequest request) {
         if (venueRepository.existsByName(request.venueName())) {
             throw new VenueAlreadyExistsException("Venue already exist with venueName : " + request.venueName());
@@ -93,7 +93,7 @@ public class VenueService {
     }
 
     @Transactional
-    @CacheEvict(value = "venues", allEntries = true)
+    //@CacheEvict(value = "venues", allEntries = true)
     public ResourceDeletedResponse deleteVenueById(Long id) {
         Venue venueToDelete = venueRepository.findById(id)
                 .orElseThrow(() -> new VenueNotFoundException("Venue not found with id : " + id));
