@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  app:
+    image: mhmmddzgn/biletbul:latest
+    container_name: biletbul-app
+    ports:
+      - "9090:9090"
+    env_file: .env
+    depends_on:
+      - redis
+    networks:
+      akademikaracom-network:
+
+  redis:
+    image: redis:7
+    container_name: biletbul-redis
+    ports:
+      - "6379:6379"
+    networks:
+      akademikaracom-network:
+
+networks:
+  akademikaracom-network:
