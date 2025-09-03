@@ -8,10 +8,13 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Component
 public class JwtTokenProvider {
@@ -25,11 +28,19 @@ public class JwtTokenProvider {
     public String generateToken(Authentication authentication) {
         String username = authentication.getName();
 
+        //Kullanıcının rolleri
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        List<String> roles = authorities
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
         Date now = new Date(System.currentTimeMillis());
         Date expiration = new Date(now.getTime() + jwtExpiration);
 
         String token = Jwts.builder()
                 .subject(username)
+                .claim("authorities", roles)
                 .issuedAt(new Date())
                 .expiration(expiration)
                 .signWith(getSecretKey())
