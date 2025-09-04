@@ -5,6 +5,7 @@ import com.staj.biletbul.entity.Role;
 import com.staj.biletbul.entity.User;
 import com.staj.biletbul.enums.RoleName;
 import com.staj.biletbul.exception.OrganizerAlreadyExistsException;
+import com.staj.biletbul.exception.UserAlreadyExistsException;
 import com.staj.biletbul.repository.OrganizerRepository;
 import com.staj.biletbul.repository.RoleRepository;
 import com.staj.biletbul.repository.UserRepository;
@@ -64,7 +65,7 @@ public class AuthService {
     //signup as user
     public String signupAsUser(SignupAsUserRequest signupRequest) {
         if (userRepository.existsByEmail(signupRequest.email())) {
-            return "email already in use";
+            throw new UserAlreadyExistsException(signupRequest.email() + "  already exists");
         }
         User user = new User();
         user.setFullName(signupRequest.fullName());
@@ -83,7 +84,8 @@ public class AuthService {
     //signup as organizer
     public String signupAsOrganizer(SignupAsOrganizerRequest signupRequest) {
         if (organizerRepository.existsByEmail(signupRequest.email())) {
-            return "email already in use";
+            throw new OrganizerAlreadyExistsException
+                    ("Organizer with email: " + signupRequest.email() + " already exists");
         }
         if(organizerRepository.findByOrganizerName(signupRequest.organizerName()).isPresent()) {
             throw new OrganizerAlreadyExistsException
