@@ -1,6 +1,7 @@
 package com.staj.biletbul.config;
 
 import com.staj.biletbul.security.CustomUserDetailsService;
+import com.staj.biletbul.security.JwtAccessDeniedHandler;
 import com.staj.biletbul.security.JwtAuthenticationEntryPoint;
 import com.staj.biletbul.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -28,13 +29,17 @@ public class SecurityConfig {
     private final CustomUserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
 
     public SecurityConfig(CustomUserDetailsService userDetailsService,
                           JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint,
-                          JwtAuthenticationFilter jwtAuthenticationFilter) {
+                          JwtAuthenticationFilter jwtAuthenticationFilter,
+                          JwtAccessDeniedHandler jwtAccessDeniedHandler) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationEntryPoint = jwtAuthenticationEntryPoint;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.jwtAccessDeniedHandler = jwtAccessDeniedHandler;
     }
 
     @Bean
@@ -99,7 +104,10 @@ public class SecurityConfig {
                     request.requestMatchers(HttpMethod.POST, "/api/books").hasRole("USER");
                 })
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                        .accessDeniedHandler(jwtAccessDeniedHandler)
+                )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults());
         return http.build();
